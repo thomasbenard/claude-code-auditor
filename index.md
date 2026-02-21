@@ -1,3 +1,9 @@
+---
+title: Home
+layout: home
+nav_order: 0
+---
+
 # Claude Code Reference Guide
 
 *This guide was written entirely by Claude Code itself.*

@@ -1,3 +1,8 @@
+---
+title: "4. Subagents and Task Delegation"
+nav_order: 4
+---
+
 # Chapter 4: Subagents and Task Delegation
 
 Subagents are one of Claude Code's most powerful features. They let you spawn isolated Claude instances to handle specific tasks, keeping the main conversation context clean and enabling parallel work.

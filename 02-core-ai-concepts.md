@@ -1,3 +1,8 @@
+---
+title: "2. Core AI Concepts"
+nav_order: 2
+---
+
 # Chapter 2: Core AI Concepts
 
 Understanding how large language models work under the hood helps you use Claude Code more effectively and avoid common pitfalls. This chapter covers the key concepts that directly affect your experience.

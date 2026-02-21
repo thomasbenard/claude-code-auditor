@@ -1,3 +1,8 @@
+---
+title: "7. Project Setup"
+nav_order: 7
+---
+
 # Chapter 7: Project Setup
 
 This chapter covers how to set up a project for optimal Claude Code usage. A well-configured project dramatically improves Claude Code's effectiveness -- it makes fewer mistakes, follows your conventions, and works faster.

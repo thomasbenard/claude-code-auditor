@@ -1,0 +1,14 @@
+title: Claude Code Reference Guide
+description: A comprehensive reference for using Claude Code effectively
+remote_theme: just-the-docs/just-the-docs@v0.10.1
+
+exclude:
+  - CLAUDE.md
+  - .claude/
+  - .gitignore
+
+search_enabled: true
+color_scheme: light
+
+aux_links:
+  "GitHub": "https://github.com/thomasbenard/claude-code-auditor"

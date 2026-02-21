@@ -1,3 +1,8 @@
+---
+title: "10. Troubleshooting and Optimization"
+nav_order: 10
+---
+
 # Chapter 10: Troubleshooting and Optimization
 
 This chapter covers how to diagnose common issues, optimize context usage, reduce costs, and get Claude Code working at peak efficiency.

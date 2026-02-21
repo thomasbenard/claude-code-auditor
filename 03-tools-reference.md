@@ -1,3 +1,8 @@
+---
+title: "3. Tools Reference"
+nav_order: 3
+---
+
 # Chapter 3: Tools Reference
 
 Tools are the primary way Claude Code interacts with your system. Every file read, code edit, command execution, and search is performed through a specific tool. Understanding the tools helps both humans and Claude Code make the right choices.

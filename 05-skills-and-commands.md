@@ -1,3 +1,8 @@
+---
+title: "5. Skills and Slash Commands"
+nav_order: 5
+---
+
 # Chapter 5: Skills and Slash Commands
 
 Skills and slash commands extend Claude Code with reusable instructions, workflows, and domain-specific knowledge. They are how you teach Claude Code project-specific patterns or create repeatable workflows.

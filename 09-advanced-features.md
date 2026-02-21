@@ -1,3 +1,8 @@
+---
+title: "9. Advanced Features"
+nav_order: 9
+---
+
 # Chapter 9: Advanced Features
 
 This chapter covers Claude Code's advanced capabilities: hooks for automation, worktrees for isolation, MCP for external integrations, headless mode for CI/CD, and more.

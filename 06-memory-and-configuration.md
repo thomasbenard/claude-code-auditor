@@ -1,3 +1,8 @@
+---
+title: "6. Memory and Configuration"
+nav_order: 6
+---
+
 # Chapter 6: Memory and Configuration
 
 Claude Code has a layered memory and configuration system that lets you control its behavior at every level -- from organization-wide policies down to personal preferences.

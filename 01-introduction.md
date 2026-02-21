@@ -1,3 +1,8 @@
+---
+title: "1. Introduction to Claude Code"
+nav_order: 1
+---
+
 # Chapter 1: Introduction to Claude Code
 
 ## What is Claude Code?

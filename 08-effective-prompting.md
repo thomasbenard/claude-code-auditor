@@ -1,3 +1,8 @@
+---
+title: "8. Effective Prompting and Workflow"
+nav_order: 8
+---
+
 # Chapter 8: Effective Prompting and Workflow
 
 How you communicate with Claude Code significantly affects the quality and efficiency of the results. This chapter covers prompting strategies, workflow patterns, and practical tips for getting the most out of every interaction.
