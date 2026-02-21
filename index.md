@@ -1,5 +1,7 @@
 # Claude Code Reference Guide
 
+*This guide was written entirely by Claude Code itself.*
+
 A comprehensive reference for using Claude Code effectively. This guide serves two audiences:
 
 - **Humans** learning to use Claude Code for software engineering tasks
