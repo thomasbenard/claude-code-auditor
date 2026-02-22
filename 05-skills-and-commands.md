@@ -348,4 +348,4 @@ Generate comprehensive tests for: $ARGUMENTS
 
 ---
 
-Next: [Memory and Configuration](06-memory-and-configuration.md) -- How Claude Code remembers and how to configure it.
+Next: [MCP (Model Context Protocol)](06-mcp.md) -- Connecting Claude Code to external tools and services.

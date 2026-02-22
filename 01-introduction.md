@@ -46,7 +46,7 @@ Claude Code operates with a layered permission system:
 - **Permission required**: Editing files, running bash commands, writing new files
 - **Configurable**: You can allow/deny specific tool patterns (e.g., allow `npm test` but deny `rm -rf`)
 
-You control the permission mode: from strict (ask for everything) to autonomous (bypass all checks). See [Chapter 6](06-memory-and-configuration.md) for details.
+You control the permission mode: from strict (ask for everything) to autonomous (bypass all checks). See [Chapter 7](07-memory-and-configuration.md) for details.
 
 ## Available Models
 
@@ -101,9 +101,9 @@ The CLI and IDE extensions share conversation history and configuration.
 | **Tools** | Functions Claude calls to interact with your system | [Chapter 3](03-tools-reference.md) |
 | **Subagents** | Isolated Claude instances for delegated tasks | [Chapter 4](04-subagents.md) |
 | **Skills** | Reusable instructions and commands | [Chapter 5](05-skills-and-commands.md) |
-| **CLAUDE.md** | Project-level instructions file | [Chapter 7](07-project-setup.md) |
-| **Hooks** | Automated shell commands on lifecycle events | [Chapter 9](09-advanced-features.md) |
-| **MCP** | Protocol for connecting to external services | [Chapter 9](09-advanced-features.md) |
+| **MCP** | Protocol for connecting to external services | [Chapter 6](06-mcp.md) |
+| **CLAUDE.md** | Project-level instructions file | [Chapter 8](08-project-setup.md) |
+| **Hooks** | Automated shell commands on lifecycle events | [Chapter 10](10-advanced-features.md) |
 
 ## What Claude Code is Good At
 

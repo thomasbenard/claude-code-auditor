@@ -1,9 +1,9 @@
 ---
-title: "10. Troubleshooting and Optimization"
-nav_order: 10
+title: "11. Troubleshooting and Optimization"
+nav_order: 11
 ---
 
-# Chapter 10: Troubleshooting and Optimization
+# Chapter 11: Troubleshooting and Optimization
 
 This chapter covers how to diagnose common issues, optimize context usage, reduce costs, and get Claude Code working at peak efficiency.
 
@@ -62,7 +62,7 @@ Each MCP server adds tool definitions to your system prompt. Check the cost:
 /mcp
 ```
 
-Disable servers you're not actively using.
+Disable servers you're not actively using. See [Chapter 6](06-mcp.md) for MCP optimization strategies.
 
 **5. Keep CLAUDE.md concise**
 
@@ -272,7 +272,7 @@ When something isn't working:
 3. **Check context**:
    - Is context nearly full? (`/context`)
    - Was important context lost to compaction?
-   - Are too many MCP servers consuming space?
+   - Are too many MCP servers consuming space? (See [Chapter 6](06-mcp.md))
 
 4. **Try isolation**:
    - Start a new session to rule out context issues

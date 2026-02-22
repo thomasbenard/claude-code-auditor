@@ -21,7 +21,7 @@ For each check below, report one of:
 ---
 
 ## 1. CLAUDE.md Quality
-Reference: [Chapter 6](06-memory-and-configuration.md), [Chapter 7](07-project-setup.md)
+Reference: [Chapter 7](07-memory-and-configuration.md), [Chapter 8](08-project-setup.md)
 
 Read `CLAUDE.md` and/or `.claude/CLAUDE.md` at the project root. Evaluate whether it includes:
 - [ ] Project overview (what the project does)
@@ -35,7 +35,7 @@ Read `CLAUDE.md` and/or `.claude/CLAUDE.md` at the project root. Evaluate whethe
 If no CLAUDE.md exists at all, flag this as the highest-priority finding.
 
 ## 2. Modular Rules
-Reference: [Chapter 6](06-memory-and-configuration.md)
+Reference: [Chapter 7](07-memory-and-configuration.md)
 
 Check if `.claude/rules/` exists. If it does:
 - List the rule files found
@@ -57,7 +57,7 @@ Reference: [Chapter 4](04-subagents.md)
 Check if `.claude/agents/` exists. If it does, list the agents found and their descriptions. If not, note whether the project's complexity would benefit from custom agents (e.g., a test-runner agent, a code-review agent).
 
 ## 5. Settings and Permissions
-Reference: [Chapter 6](06-memory-and-configuration.md)
+Reference: [Chapter 7](07-memory-and-configuration.md)
 
 Check if `.claude/settings.json` exists. If it does, evaluate:
 - Are there permission `allow` rules for common project commands (build, test, lint)?
@@ -67,7 +67,7 @@ Check if `.claude/settings.json` exists. If it does, evaluate:
 If no settings file exists, suggest appropriate permission rules based on the project's tooling.
 
 ## 6. MCP Configuration
-Reference: [Chapter 9](09-advanced-features.md)
+Reference: [Chapter 6](06-mcp.md)
 
 Check if `.mcp.json` exists at the project root. If it does, list the configured servers. If not, consider whether the project would benefit from common MCP servers:
 - GitHub (if the project is a git repo)
@@ -75,12 +75,12 @@ Check if `.mcp.json` exists at the project root. If it does, list the configured
 - Other services relevant to the detected tech stack
 
 ## 7. Dev Server Preview
-Reference: [Chapter 9](09-advanced-features.md)
+Reference: [Chapter 10](10-advanced-features.md)
 
 Check if `.claude/launch.json` exists. If the project has a dev server (look for `dev` or `start` scripts in `package.json`, or equivalent in other ecosystems), flag a missing `launch.json` as a gap.
 
 ## 8. Git Hygiene
-Reference: [Chapter 7](07-project-setup.md)
+Reference: [Chapter 8](08-project-setup.md)
 
 Read `.gitignore` and check whether it excludes:
 - [ ] `CLAUDE.local.md`
@@ -89,7 +89,7 @@ Read `.gitignore` and check whether it excludes:
 If `.gitignore` does not exist or is missing these entries, flag it.
 
 ## 9. Hooks
-Reference: [Chapter 9](09-advanced-features.md)
+Reference: [Chapter 10](10-advanced-features.md)
 
 Check if `.claude/settings.json` contains a `hooks` configuration. If it does, list the hook events and matchers. If not, suggest hooks based on the project's tooling:
 - PostToolUse hook for auto-formatting after Edit/Write (if the project uses prettier, black, gofmt, rustfmt, etc.)

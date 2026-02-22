@@ -1,11 +1,11 @@
 ---
-title: "9. Advanced Features"
-nav_order: 9
+title: "10. Advanced Features"
+nav_order: 10
 ---
 
-# Chapter 9: Advanced Features
+# Chapter 10: Advanced Features
 
-This chapter covers Claude Code's advanced capabilities: hooks for automation, worktrees for isolation, MCP for external integrations, headless mode for CI/CD, and more.
+This chapter covers Claude Code's advanced capabilities: hooks for automation, worktrees for isolation, headless mode for CI/CD, IDE integrations, and more. For MCP (Model Context Protocol), see [Chapter 6](06-mcp.md).
 
 ## Hooks
 
@@ -213,95 +213,7 @@ git worktree prune
 
 ## MCP (Model Context Protocol)
 
-MCP is an open standard that lets Claude Code connect to external tools and services. It extends Claude's capabilities beyond the built-in tools.
-
-### How MCP Works
-
-MCP servers expose three types of capabilities:
-
-1. **Tools**: Functions Claude can call (e.g., create a GitHub issue, query a database)
-2. **Resources**: Data Claude can reference with @-mentions (e.g., a specific GitHub issue)
-3. **Prompts**: Pre-built prompts that become slash commands
-
-### Transport Types
-
-| Transport | How it works | Best for |
-| --- | --- | --- |
-| **HTTP** | Claude connects to a remote HTTP endpoint | Cloud services (GitHub, Slack, Sentry) |
-| **SSE** (deprecated) | Server-sent events over HTTP | Legacy servers |
-| **Stdio** | Claude runs a local process and communicates via stdin/stdout | Local tools (databases, file processors) |
-
-### Adding MCP Servers
-
-```bash
-# HTTP server
-claude mcp add --transport http github https://api.githubcopilot.com/mcp/
-
-# Stdio server with environment variables
-claude mcp add --transport stdio --env DATABASE_URL=postgres://localhost/mydb \
-  postgres -- npx -y @modelcontextprotocol/server-postgres
-
-# List all servers
-claude mcp list
-
-# Get details for a server
-claude mcp get github
-
-# Remove a server
-claude mcp remove github
-```
-
-### MCP Configuration Scopes
-
-| Scope | File | Shared | Purpose |
-| --- | --- | --- | --- |
-| **Project** | `.mcp.json` | Yes (git) | Team-shared servers |
-| **User** | `~/.claude.json` | No | Personal servers |
-| **Managed** | System directory | Organization-wide | Enforced by admins |
-
-### Project MCP Configuration
-
-`.mcp.json` (commit to git for team sharing):
-
-```json
-{
-  "mcpServers": {
-    "github": {
-      "type": "http",
-      "url": "https://api.githubcopilot.com/mcp/"
-    },
-    "postgres": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-postgres"],
-      "env": {
-        "DATABASE_URL": "${DATABASE_URL}"
-      }
-    }
-  }
-}
-```
-
-### Using MCP in Practice
-
-Once configured, MCP tools appear as regular tools. Claude uses them automatically when relevant:
-
-```
-User: Create a GitHub issue for the login bug we found
-
-Claude: [Calls mcp__github__create_issue with title and description]
-        Created issue #42: "Login fails with + character in email"
-```
-
-### Context Cost of MCP
-
-Each MCP server adds its tool definitions to the system prompt, consuming context tokens. An MCP server with 20 tools might consume 2-5k tokens just for definitions.
-
-**Optimization**: Only enable MCP servers you actively need. Disable or remove unused ones with `claude mcp remove <name>`.
-
-### Authentication
-
-Many MCP servers require authentication. Use `/mcp` in a session to authenticate OAuth-based servers. Credentials are stored securely and reused across sessions.
+For comprehensive coverage of MCP -- including architecture, configuration, authentication, popular servers, building custom servers, debugging, and best practices -- see [Chapter 6: MCP](06-mcp.md).
 
 ## Headless Mode
 
@@ -429,4 +341,4 @@ Skip it when:
 
 ---
 
-Next: [Troubleshooting and Optimization](10-troubleshooting.md) -- Solving common problems and maximizing efficiency.
+Next: [Troubleshooting and Optimization](11-troubleshooting.md) -- Solving common problems and maximizing efficiency.

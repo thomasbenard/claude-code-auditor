@@ -4,7 +4,7 @@ Use these examples when making recommendations to the user. They represent the p
 
 ## Minimal Effective CLAUDE.md
 
-See [Chapter 7 - Writing an Effective CLAUDE.md](07-project-setup.md) for the full template.
+See [Chapter 8 - Writing an Effective CLAUDE.md](08-project-setup.md) for the full template.
 
 ```markdown
 # Project Name
@@ -92,7 +92,7 @@ See [Chapter 5](05-skills-and-commands.md) for the full skill format and example
 }
 ```
 
-See [Chapter 7 - Configuring Permissions](07-project-setup.md) for more patterns.
+See [Chapter 8 - Configuring Permissions](08-project-setup.md) for more patterns.
 
 ## Hook Examples
 
@@ -120,7 +120,7 @@ See [Chapter 7 - Configuring Permissions](07-project-setup.md) for more patterns
 }
 ```
 
-See [Chapter 9 - Hooks](09-advanced-features.md) for the full event reference and more examples.
+See [Chapter 10 - Hooks](10-advanced-features.md) for the full event reference and more examples.
 
 ## Dev Server Configuration
 
@@ -138,4 +138,4 @@ See [Chapter 9 - Hooks](09-advanced-features.md) for the full event reference an
 }
 ```
 
-See [Chapter 7 - Setting Up Dev Server Preview](07-project-setup.md) for details.
+See [Chapter 8 - Setting Up Dev Server Preview](08-project-setup.md) for details.

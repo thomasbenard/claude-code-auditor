@@ -1,9 +1,9 @@
 ---
-title: "8. Effective Prompting and Workflow"
-nav_order: 8
+title: "9. Effective Prompting and Workflow"
+nav_order: 9
 ---
 
-# Chapter 8: Effective Prompting and Workflow
+# Chapter 9: Effective Prompting and Workflow
 
 How you communicate with Claude Code significantly affects the quality and efficiency of the results. This chapter covers prompting strategies, workflow patterns, and practical tips for getting the most out of every interaction.
 
@@ -369,4 +369,4 @@ to the remaining three endpoints.
 
 ---
 
-Next: [Advanced Features](09-advanced-features.md) -- Hooks, worktrees, MCP, headless mode, and more.
+Next: [Advanced Features](10-advanced-features.md) -- Hooks, worktrees, headless mode, and more.

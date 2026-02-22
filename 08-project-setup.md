@@ -1,9 +1,9 @@
 ---
-title: "7. Project Setup"
-nav_order: 7
+title: "8. Project Setup"
+nav_order: 8
 ---
 
-# Chapter 7: Project Setup
+# Chapter 8: Project Setup
 
 This chapter covers how to set up a project for optimal Claude Code usage. A well-configured project dramatically improves Claude Code's effectiveness -- it makes fewer mistakes, follows your conventions, and works faster.
 
@@ -229,44 +229,7 @@ Individual developers override in `.claude/settings.local.json`.
 
 ## Setting Up MCP Servers
 
-### Project-Level MCP (.mcp.json)
-
-Share MCP server configuration with the team:
-
-```json
-{
-  "mcpServers": {
-    "github": {
-      "type": "http",
-      "url": "https://api.githubcopilot.com/mcp/"
-    },
-    "postgres": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-postgres"],
-      "env": {
-        "DATABASE_URL": "${DATABASE_URL}"
-      }
-    }
-  }
-}
-```
-
-### Managing MCP Servers
-
-```bash
-# Add a server
-claude mcp add --transport http github https://api.githubcopilot.com/mcp/
-
-# List servers
-claude mcp list
-
-# Remove a server
-claude mcp remove github
-
-# Authenticate (for OAuth servers)
-# Use /mcp in a session
-```
+Add MCP server configuration to `.mcp.json` at the project root so the whole team shares the same integrations. For comprehensive coverage of MCP -- including architecture, transport types, authentication, popular servers, and best practices -- see [Chapter 6: MCP](06-mcp.md).
 
 ## Setting Up Dev Server Preview
 
@@ -414,4 +377,4 @@ Claude Code loads the CLAUDE.md closest to the files it's working on, plus paren
 
 ---
 
-Next: [Effective Prompting and Workflow](08-effective-prompting.md) -- Getting the best results from Claude Code.
+Next: [Effective Prompting and Workflow](09-effective-prompting.md) -- Getting the best results from Claude Code.

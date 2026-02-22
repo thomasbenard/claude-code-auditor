@@ -1,9 +1,9 @@
 ---
-title: "6. Memory and Configuration"
-nav_order: 6
+title: "7. Memory and Configuration"
+nav_order: 7
 ---
 
-# Chapter 6: Memory and Configuration
+# Chapter 7: Memory and Configuration
 
 Claude Code has a layered memory and configuration system that lets you control its behavior at every level -- from organization-wide policies down to personal preferences.
 
@@ -354,4 +354,4 @@ This section is re-injected after compaction, ensuring critical project context 
 
 ---
 
-Next: [Project Setup](07-project-setup.md) -- Setting up a project for optimal Claude Code usage.
+Next: [Project Setup](08-project-setup.md) -- Setting up a project for optimal Claude Code usage.
