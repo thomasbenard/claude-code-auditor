@@ -139,3 +139,32 @@ See [Chapter 10 - Hooks](10-advanced-features.md) for the full event reference a
 ```
 
 See [Chapter 8 - Setting Up Dev Server Preview](08-project-setup.md) for details.
+
+## Output Format
+
+After completing all checks, produce your report in this structure:
+
+### Summary Table
+
+| # | Check | Status | Priority |
+|---|-------|--------|----------|
+| 1 | CLAUDE.md quality | PASS/PARTIAL/MISSING | High/Medium/Low |
+| 2 | Modular rules | ... | ... |
+| 3 | Skills | ... | ... |
+| 4 | Custom agents | ... | ... |
+| 5 | Settings & permissions | ... | ... |
+| 6 | MCP configuration | ... | ... |
+| 7 | Dev server preview | ... | ... |
+| 8 | Git hygiene | ... | ... |
+| 9 | Hooks | ... | ... |
+
+### Top 3 Recommendations
+
+List the three highest-impact improvements in priority order. For each, provide:
+1. What to create or change (be specific with file paths and content)
+2. Why it matters
+3. Which chapter in this guide has the full details
+
+### Detailed Findings
+
+Provide the full per-check evaluation as assessed above.
