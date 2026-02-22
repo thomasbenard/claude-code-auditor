@@ -12,6 +12,7 @@ This is a documentation-only project: an 11-chapter reference guide about Claude
 - `01-introduction.md` through `11-troubleshooting.md` -- Chapters in reading order
 - `.claude/skills/audit-claude-setup/` -- Skill that audits a project's Claude Code setup against this guide's best practices
 - `.claude/skills/audit-skills/` -- Skill that audits a project's Claude Code skills for quality and token efficiency
+- `.claude/skills/audit-agents/` -- Skill that audits a project's Claude Code custom agents for quality and token efficiency
 
 Chapters are grouped into four sections:
 1. Fundamentals (01-02): concepts and background
