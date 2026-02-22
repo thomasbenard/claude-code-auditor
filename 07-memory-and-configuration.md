@@ -143,43 +143,131 @@ paths:
 
 Path-scoped rules are only loaded when Claude is working on files matching the patterns, saving context space.
 
-## Auto Memory
+## Auto Memory (MEMORY.md)
 
-Auto memory is Claude Code's own note-taking system. It persists across conversations.
+CLAUDE.md files are instructions *you* write for Claude. Auto memory is the opposite: it is Claude Code's own notebook -- a place where Claude writes notes *to itself* that persist across conversations. Think of it as Claude's long-term memory for your project.
+
+Without auto memory, every conversation starts from scratch. Claude would re-discover the same project quirks, re-learn your preferences, and repeat mistakes it already solved. MEMORY.md bridges that gap by letting Claude carry forward what it learns.
+
+### How It Differs from CLAUDE.md
+
+| | CLAUDE.md | MEMORY.md |
+| --- | --- | --- |
+| **Who writes it** | You (the developer) | Claude Code |
+| **Purpose** | Instructions and rules for Claude to follow | Notes Claude keeps for its own reference |
+| **Shared with team** | Yes (committed to git) | No (local to your machine) |
+| **Content style** | Directives ("always do X", "never do Y") | Observations ("this project uses X", "user prefers Y") |
+| **Loaded into context** | Full file | First 200 lines only |
+
+Both are loaded into Claude's system prompt at the start of every session, but they serve different roles. CLAUDE.md is like a project README for Claude; MEMORY.md is like Claude's personal scratch pad.
 
 ### Location
 
+Auto memory lives in a per-project directory under your home folder:
+
 ```
 ~/.claude/projects/<project-hash>/memory/
-├── MEMORY.md          ← Loaded into system prompt (first 200 lines)
+├── MEMORY.md          ← Main file, loaded into system prompt (first 200 lines)
 ├── debugging.md       ← Topic file (linked from MEMORY.md)
 ├── patterns.md        ← Topic file
 └── decisions.md       ← Topic file
 ```
 
+The `<project-hash>` is derived from the project path, so each project gets its own separate memory. You can view and edit the `/memory` slash command to open these files directly.
+
 ### How Auto Memory Works
 
-- `MEMORY.md` is automatically loaded into the system prompt at session start
-- Only the first 200 lines are loaded -- keep it concise
-- Claude can read and write memory files during sessions
-- Detailed notes go in topic files, linked from MEMORY.md
-- Claude should verify patterns across multiple interactions before saving
+1. **Automatic loading**: `MEMORY.md` is loaded into the system prompt at the start of every session. Claude sees its own notes before you even type your first message.
+2. **200-line limit**: Only the first 200 lines of `MEMORY.md` are loaded. Lines beyond that are silently truncated, so brevity matters.
+3. **Claude reads and writes**: Claude uses its standard Read, Write, and Edit tools to manage memory files during a session. No special API is needed.
+4. **Topic files for overflow**: When a subject needs more detail than fits in 200 lines, Claude creates separate topic files (e.g., `debugging.md`, `patterns.md`) and links to them from MEMORY.md. These are not auto-loaded but Claude can read them on demand.
+5. **Verification before saving**: Claude is instructed to confirm patterns across multiple interactions before committing them to memory, avoiding premature or inaccurate notes.
 
-### What Claude Should Save
+### What Claude Saves
 
-- Confirmed patterns and conventions
-- Key architectural decisions
-- Important file paths
-- User preferences for workflow and communication
-- Solutions to recurring problems
-- Debugging insights
+Auto memory works best when it captures durable, high-value knowledge:
 
-### What Claude Should NOT Save
+- **Confirmed patterns and conventions** -- "This project uses Bun, not npm" or "Tests are in `__tests__/` directories colocated with source"
+- **Key architectural decisions** -- "Auth uses JWT with refresh tokens stored in httpOnly cookies"
+- **Important file paths** -- "Main entry point is `src/server/index.ts`, database config is in `config/database.yml`"
+- **User preferences** -- "User prefers short commit messages" or "Always ask before running destructive commands"
+- **Solutions to recurring problems** -- "The Prisma client must be regenerated after schema changes: `npx prisma generate`"
+- **Debugging insights** -- "Flaky test in `auth.test.ts` is caused by a race condition in the mock timer setup"
 
-- Session-specific context (current task, temp state)
-- Unverified conclusions from reading a single file
-- Information that duplicates CLAUDE.md
-- Speculative notes
+### What Claude Does NOT Save
+
+- **Session-specific context** -- Current task details, in-progress work, temporary state
+- **Unverified conclusions** -- Something observed in a single file without broader confirmation
+- **Duplicates of CLAUDE.md** -- If it's already in your project instructions, it doesn't need to be in memory too
+- **Speculative notes** -- Guesses or hypotheses that haven't been confirmed
+
+### Interacting with Auto Memory
+
+You can directly influence what Claude remembers:
+
+**Ask Claude to remember something:**
+```
+> Always use pnpm instead of npm in this project. Remember that.
+> Remember: the staging database is on port 5433, not 5432.
+```
+
+When you explicitly ask Claude to remember something, it saves it immediately without waiting for repeated confirmation.
+
+**Ask Claude to forget something:**
+```
+> Stop remembering that we use Jest -- we switched to Vitest.
+> Forget the note about the staging database port.
+```
+
+Claude will find and remove or update the relevant entry in its memory files.
+
+**Review what Claude remembers:**
+```
+> What do you have in your memory files for this project?
+> Show me your MEMORY.md
+```
+
+You can also use the `/memory` slash command to view and edit auto memory files directly.
+
+### Example MEMORY.md
+
+Here is what a real MEMORY.md might look like after several sessions:
+
+```markdown
+# Project Memory
+
+## Build & Tools
+- Uses pnpm (not npm or yarn)
+- Node 20 required (nvm use before running anything)
+- `pnpm dev` starts both API and frontend concurrently
+
+## Architecture
+- API: Express with TypeScript in src/api/
+- Frontend: React 18 + Vite in src/web/
+- Shared types: src/shared/types/
+
+## User Preferences
+- Prefers concise commit messages (imperative, <50 chars)
+- Wants tests run before every commit suggestion
+- Uses VS Code with Prettier on save
+
+## Known Issues
+- See [debugging.md](debugging.md) for the Redis connection timeout workaround
+- Test suite requires Docker running (for Postgres container)
+
+## Conventions Discovered
+- API routes follow pattern: src/api/routes/{resource}.routes.ts
+- Each route file exports a router, registered in src/api/index.ts
+- Validation uses Zod schemas colocated with route files
+```
+
+### Tips for Effective Auto Memory
+
+- **Keep MEMORY.md under 200 lines** -- anything beyond that is not loaded. Move detailed notes to topic files.
+- **Organize by topic, not by date** -- semantic grouping ("Build & Tools", "Architecture") is more useful than a chronological log.
+- **Prune regularly** -- if you notice outdated notes, tell Claude to update or remove them. Stale memory is worse than no memory.
+- **Don't duplicate CLAUDE.md** -- if you've already documented something in your project instructions, Claude doesn't need to memorize it separately.
+- **Use topic files for depth** -- a MEMORY.md entry like "See [debugging.md](debugging.md) for Redis workaround" keeps the main file lean while preserving detail.
 
 ## Configuration Settings
 
