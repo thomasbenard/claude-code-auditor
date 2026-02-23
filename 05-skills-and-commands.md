@@ -330,6 +330,14 @@ Generate comprehensive tests for: $ARGUMENTS
 5. Run the tests to verify they pass
 ```
 
+## User Interaction in Skills
+
+Because skills run in the main agent context (not in a subagent), they have access to the `AskUserQuestion` tool. This means a skill can pause mid-execution to ask the user clarifying questions with multiple-choice options before continuing.
+
+This is a key difference from subagents spawned via the Task tool, where `AskUserQuestion` is **not** available. If your workflow needs to gather user input at runtime, implement it as a skill rather than a custom agent.
+
+For skills that run in a subagent (`context: fork`), `AskUserQuestion` is not available — the skill runs in an isolated context that cannot prompt the user.
+
 ## Best Practices
 
 1. **Keep skills focused**: One skill, one purpose. Don't create mega-skills that do everything.

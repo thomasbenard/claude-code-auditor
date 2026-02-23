@@ -16,6 +16,7 @@ A subagent is a separate Claude instance launched via the **Task** tool. Each su
 - Can use a different model than the main conversation
 - Returns a single result message when finished
 - Cannot see or modify the main conversation's context
+- Cannot use `AskUserQuestion` to prompt the user for input
 
 Think of subagents as delegating work to a specialist. You give them a clear brief, they do the work, and they report back.
 
