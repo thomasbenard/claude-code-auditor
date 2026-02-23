@@ -28,7 +28,7 @@ A tokenizer splits text into pieces based on statistical patterns learned from t
 ### Why Tokens Matter
 
 1. **Cost**: You are billed per token (both input and output). More tokens = higher cost.
-2. **Context window**: The context window is measured in tokens, not characters. A 200k token window is roughly 150k words or about 500 pages of text.
+2. **Context window**: The context window is measured in tokens, not characters. A 200k token window is roughly 150k words or about 500 pages of text. Models with 1M context can hold roughly 5x that.
 3. **Speed**: More tokens take longer to process. Output tokens are generated sequentially, so longer responses are slower.
 4. **Code is token-heavy**: Code often uses more tokens per "meaningful unit" than prose because of syntax, indentation, and variable names.
 
@@ -45,7 +45,7 @@ A tokenizer splits text into pieces based on statistical patterns learned from t
 
 The context window is the total amount of text (measured in tokens) that Claude can "see" at any given moment. Think of it as Claude's working memory -- everything it needs to reference must fit inside this window.
 
-Claude Code uses models with a **200,000 token** context window. This includes:
+Claude Code models have a context window of **200,000 tokens** by default, with support for up to **1,000,000 tokens** on models like Sonnet 4.6 and Opus 4.6 (on supported plans). The context window includes:
 
 - The system prompt (Claude Code's instructions, your CLAUDE.md, memory, etc.)
 - The entire conversation history (your messages and Claude's responses)

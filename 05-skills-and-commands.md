@@ -121,7 +121,7 @@ Provide specific, actionable feedback with file:line references.
 
 | Field | Type | Purpose |
 | --- | --- | --- |
-| `name` | string | Display name, becomes the `/name` command |
+| `name` | string | Display name, becomes the `/name` command. If omitted, uses the directory name |
 | `description` | string | When to invoke this skill (used for auto-detection) |
 | `argument-hint` | string | UI hint showing expected arguments |
 | `disable-model-invocation` | boolean | If true, only the user can invoke (not auto-detected) |
@@ -143,6 +143,8 @@ Skills support dynamic content injection:
 | `$ARGUMENTS[0]` | Same as `$0` |
 | `${CLAUDE_SESSION_ID}` | Current session identifier |
 | `` !`command` `` | Output of a shell command (preprocessing) |
+
+If `$ARGUMENTS` does not appear anywhere in the skill content, any arguments the user passes are automatically appended as `ARGUMENTS: <value>` at the end.
 
 ### Dynamic Context with Shell Preprocessing
 
@@ -177,12 +179,17 @@ Skills are loaded from multiple locations with clear precedence:
 
 | Location | Scope | Priority | Shared |
 | --- | --- | --- | --- |
-| `.claude/skills/<name>/` | Project | Highest | Yes (via git) |
-| `~/.claude/skills/<name>/` | User | Medium | No |
-| Plugin skills | Where plugin is enabled | Lowest | Depends on plugin |
-| `.claude/commands/` | Project (legacy) | Low | Yes |
+| Managed (enterprise) | Organization | Highest | Yes (admin-controlled) |
+| `~/.claude/skills/<name>/` | User (personal) | High | No |
+| `.claude/skills/<name>/` | Project | Medium | Yes (via git) |
+| Plugin skills | Where plugin is enabled | Low | Depends on plugin |
+| `.claude/commands/` | Project (legacy) | Lowest | Yes |
 
-Project-level skills override user-level skills of the same name.
+When skills share the same name, higher-priority locations win. User-level (personal) skills override project-level skills of the same name. Plugin skills use a `plugin-name:skill-name` namespace, so they cannot conflict with other levels. If a skill and a legacy command share the same name, the skill takes precedence.
+
+### Automatic Discovery in Monorepos
+
+When you work with files in subdirectories, Claude Code automatically discovers skills from nested `.claude/skills/` directories. For example, if you are editing a file in `packages/frontend/`, Claude Code also loads skills from `packages/frontend/.claude/skills/`. This supports monorepo setups where packages define their own skills.
 
 ## Invocation Modes
 

@@ -21,12 +21,17 @@ Hooks are automated shell commands that execute at specific lifecycle events. Th
 | `PermissionRequest` | Permission dialog appears | Tool name | Auto-approve/deny based on rules |
 | `PostToolUse` | After a tool succeeds | Tool name | Auto-format, lint, post-processing |
 | `PostToolUseFailure` | After a tool fails | Tool name | Error logging, fallback actions |
-| `Notification` | Claude needs attention | `permission_prompt`, `idle_prompt` | Desktop notifications |
+| `Notification` | Claude needs attention | `permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog` | Desktop notifications |
 | `SubagentStart` | Subagent spawns | Agent name | Tracking, logging |
 | `SubagentStop` | Subagent finishes | Agent name | Tracking, logging |
 | `Stop` | Claude finishes responding | (no matcher) | Post-response actions |
+| `TeammateIdle` | Agent team teammate about to go idle | (no matcher) | Enforce quality gates before teammate stops |
+| `TaskCompleted` | Task being marked completed | (no matcher) | Enforce completion criteria |
 | `PreCompact` | Before context compaction | `manual`, `auto` | Save state before compaction |
 | `ConfigChange` | Configuration file changes | Config type | React to config updates |
+| `WorktreeCreate` | Worktree being created | (no matcher) | Custom VCS setup (replaces default git) |
+| `WorktreeRemove` | Worktree being removed | (no matcher) | Custom VCS cleanup |
+| `SessionEnd` | Session terminates | `clear`, `logout`, `prompt_input_exit`, `other` | Cleanup, logging |
 
 ### Hook Configuration
 
@@ -151,6 +156,104 @@ if [[ "$FILE" == *.ts ]] || [[ "$FILE" == *.tsx ]]; then
 fi
 exit 0
 ```
+
+### Referencing Scripts by Path
+
+Use `$CLAUDE_PROJECT_DIR` to reference hook scripts relative to the project root, regardless of the working directory when the hook fires:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-style.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Prompt-Based Hooks
+
+In addition to command hooks (`type: "command"`), hooks can use an LLM to evaluate whether to allow or block an action.
+
+Set `type` to `"prompt"` and provide a `prompt` string instead of a `command`. Use `$ARGUMENTS` as a placeholder for the hook's JSON input. Claude Code sends the combined prompt and input to a fast Claude model, which returns a JSON decision (`{"ok": true}` to allow, `{"ok": false, "reason": "..."}` to block).
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Evaluate if Claude should stop: $ARGUMENTS. Check if all tasks are complete.",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Prompt-based hooks are supported on: `PreToolUse`, `PermissionRequest`, `PostToolUse`, `PostToolUseFailure`, `UserPromptSubmit`, `Stop`, `SubagentStop`, and `TaskCompleted`.
+
+### Agent-Based Hooks
+
+Agent hooks (`type: "agent"`) are like prompt-based hooks but with multi-turn tool access. Instead of a single LLM call, an agent hook spawns a subagent that can use Read, Grep, and Glob to verify conditions before returning a decision.
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "Verify that all unit tests pass. Run the test suite and check the results. $ARGUMENTS",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Agent hooks support the same events as prompt-based hooks.
+
+### Async Hooks
+
+By default, hooks block Claude's execution until they complete. For long-running tasks like test suites or deployments, set `"async": true` on a command hook to run it in the background while Claude continues working:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/path/to/run-tests.sh",
+            "async": true,
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Async hooks cannot block or return decisions -- the triggering action has already proceeded. When the background process finishes, any `systemMessage` or `additionalContext` in its JSON output is delivered to Claude on the next conversation turn. Only `type: "command"` hooks support `async`.
 
 ## Worktrees
 

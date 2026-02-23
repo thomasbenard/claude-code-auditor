@@ -60,6 +60,24 @@ Claude Code supports multiple Claude models, each with different tradeoffs:
 
 Switch models during a session with `/model` or `Alt+P`. Subagents can use different models than the main conversation.
 
+## Installing Claude Code
+
+```bash
+# macOS, Linux, WSL
+curl -fsSL https://claude.ai/install.sh | bash
+
+# Windows PowerShell
+irm https://claude.ai/install.ps1 | iex
+
+# Homebrew (macOS/Linux, does not auto-update)
+brew install --cask claude-code
+
+# WinGet (Windows, does not auto-update)
+winget install Anthropic.ClaudeCode
+```
+
+Native installations auto-update in the background. Homebrew and WinGet require manual upgrades (`brew upgrade claude-code` / `winget upgrade Anthropic.ClaudeCode`).
+
 ## Running Claude Code
 
 ### Terminal (CLI)
@@ -82,22 +100,30 @@ claude --permission-mode plan
 
 # Start in a worktree
 claude --worktree feature-name
+
+# Authentication management
+claude auth login
+claude auth status
+claude auth logout
+
+# List configured custom agents
+claude agents
 ```
 
-### IDE Integration
+### IDE and App Integration
 
-Claude Code integrates with:
+Claude Code is available in multiple surfaces, all sharing the same configuration, CLAUDE.md files, and MCP servers:
 
 - **VS Code**: Install the "Claude Code" extension from the marketplace. Provides a graphical chat panel, inline diffs, and @-mentions for files.
 - **JetBrains IDEs**: Available for IntelliJ, PyCharm, WebStorm, and others via the marketplace.
-
-The CLI and IDE extensions share conversation history and configuration.
+- **Desktop App**: A standalone application for macOS and Windows. Visual diff review, multiple sessions side by side, and cloud session handoff.
+- **Web**: Run Claude Code at [claude.ai/code](https://claude.ai/code) with no local setup. Start long-running tasks, work on repos you don't have locally, or run multiple tasks in parallel.
 
 ## Key Concepts at a Glance
 
 | Concept | What it is | Where to learn more |
 | --- | --- | --- |
-| **Context window** | The total text Claude can "see" at once (~200k tokens) | [Chapter 2](02-core-ai-concepts.md) |
+| **Context window** | The total text Claude can "see" at once (200k--1M tokens) | [Chapter 2](02-core-ai-concepts.md) |
 | **Tools** | Functions Claude calls to interact with your system | [Chapter 3](03-tools-reference.md) |
 | **Subagents** | Isolated Claude instances for delegated tasks | [Chapter 4](04-subagents.md) |
 | **Skills** | Reusable instructions and commands | [Chapter 5](05-skills-and-commands.md) |
