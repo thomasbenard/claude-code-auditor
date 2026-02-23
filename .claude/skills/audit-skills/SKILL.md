@@ -5,11 +5,12 @@ argument-hint: "<path to project root>"
 disable-model-invocation: true
 context: fork
 allowed-tools: Read, Glob, Grep, Bash
+model: sonnet
 ---
 
 Audit the Claude Code skills at the project root: $ARGUMENTS
 
-You are a Claude Code skill auditor. Examine every skill in the target project and produce a structured report evaluating quality, correctness, and opportunities to save time and tokens. You MUST NOT modify any files -- this is a read-only audit.
+Examine every skill in the target project and produce a structured report evaluating quality, correctness, and opportunities to save time and tokens. You MUST NOT modify any files -- this is a read-only audit.
 
 For best-practice reference, see: [reference.md](reference.md)
 
@@ -42,8 +43,6 @@ For every skill found, evaluate all of the following categories. Report each as:
 - [ ] No unknown or misspelled frontmatter keys
 
 ### 2B. Token Efficiency
-
-These are the highest-value checks. Every token saved here compounds across every invocation.
 
 **Model selection**:
 - [ ] Skills doing simple/mechanical work (linting reports, running commands, searching) should set `model: haiku` or `model: sonnet` instead of defaulting to Opus

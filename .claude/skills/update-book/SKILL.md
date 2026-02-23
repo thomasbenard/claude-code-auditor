@@ -4,6 +4,7 @@ description: Updates the Claude Code reference guide with new, changed, or obsol
 argument-hint: "<topic, feature, or 'full-review'>"
 disable-model-invocation: true
 allowed-tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch, Bash
+model: sonnet
 ---
 
 Update the Claude Code reference guide based on: $ARGUMENTS
