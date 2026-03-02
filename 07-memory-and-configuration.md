@@ -419,6 +419,9 @@ Customize keyboard shortcuts via `~/.claude/keybindings.json`:
 | `Ctrl+R` | Reverse search history |
 | `Ctrl+G` | Open current prompt in text editor |
 | `Ctrl+B` | Background a running task |
+| `Ctrl+F` | Kill all background agents (press twice within 3s to confirm) |
+| `Ctrl+T` | Toggle task list in the terminal status area |
+| `Ctrl+V` / `Cmd+V` | Paste image from clipboard |
 | `Shift+Tab` | Cycle permission modes |
 | `Alt+P` | Switch model |
 | `Alt+T` | Toggle extended thinking |

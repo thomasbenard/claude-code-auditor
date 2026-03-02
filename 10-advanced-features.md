@@ -31,7 +31,7 @@ Hooks are automated shell commands that execute at specific lifecycle events. Th
 | `ConfigChange` | Configuration file changes | Config type | React to config updates |
 | `WorktreeCreate` | Worktree being created | (no matcher) | Custom VCS setup (replaces default git) |
 | `WorktreeRemove` | Worktree being removed | (no matcher) | Custom VCS cleanup |
-| `SessionEnd` | Session terminates | `clear`, `logout`, `prompt_input_exit`, `other` | Cleanup, logging |
+| `SessionEnd` | Session terminates | `clear`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other` | Cleanup, logging |
 
 ### Hook Configuration
 
@@ -77,9 +77,29 @@ Hooks are configured in `.claude/settings.json`:
 }
 ```
 
+### Hook Handler Types
+
+Each entry in the inner `hooks` array is a handler. There are four types:
+
+| Type | Description |
+| --- | --- |
+| `command` | Runs a shell command. Receives JSON on stdin, returns results via exit codes and stdout |
+| `http` | POSTs the event JSON to a URL and reads the response. See [HTTP Hooks](#http-hooks) below |
+| `prompt` | Sends a prompt to a Claude model for single-turn evaluation. See [Prompt-Based Hooks](#prompt-based-hooks) |
+| `agent` | Spawns a subagent with tool access to verify conditions. See [Agent-Based Hooks](#agent-based-hooks) |
+
+**Common fields** (all types):
+
+| Field | Description |
+| --- | --- |
+| `type` | `"command"`, `"http"`, `"prompt"`, or `"agent"` |
+| `timeout` | Seconds before canceling (defaults: 600 command, 30 prompt, 60 agent) |
+| `statusMessage` | Custom spinner message displayed while the hook runs |
+| `once` | If `true`, runs only once per session then is removed (skills only) |
+
 ### Hook Input and Output
 
-**Input**: Hooks receive JSON on stdin:
+**Input**: Hooks receive JSON on stdin (for command hooks) or as the POST body (for HTTP hooks):
 
 ```json
 {
@@ -254,6 +274,43 @@ By default, hooks block Claude's execution until they complete. For long-running
 ```
 
 Async hooks cannot block or return decisions -- the triggering action has already proceeded. When the background process finishes, any `systemMessage` or `additionalContext` in its JSON output is delivered to Claude on the next conversation turn. Only `type: "command"` hooks support `async`.
+
+### HTTP Hooks
+
+HTTP hooks (`type: "http"`) send the event JSON as a POST request to a URL instead of running a shell command. This is useful for centralized validation services, remote logging, or webhook-based workflows.
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "http",
+            "url": "http://localhost:8080/hooks/pre-tool-use",
+            "timeout": 30,
+            "headers": {
+              "Authorization": "Bearer $MY_TOKEN"
+            },
+            "allowedEnvVars": ["MY_TOKEN"]
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**HTTP-specific fields:**
+
+| Field | Description |
+| --- | --- |
+| `url` | URL to POST the event JSON to |
+| `headers` | Additional HTTP headers. Values support `$VAR_NAME` interpolation for variables listed in `allowedEnvVars` |
+| `allowedEnvVars` | Environment variable names that may be interpolated into header values. Unlisted variables resolve to empty strings |
+
+The response body uses the same JSON format as command hooks. Non-2xx responses, connection failures, and timeouts produce non-blocking errors (the action proceeds). To block a tool call, return a 2xx response with a `permissionDecision: "deny"` in the JSON body.
 
 ## Worktrees
 

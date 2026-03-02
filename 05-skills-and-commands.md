@@ -20,6 +20,7 @@ Claude Code ships with built-in commands invoked by typing `/` in the prompt:
 | `/resume` | Open session picker to resume a previous conversation |
 | `/rename <name>` | Rename the current session |
 | `/rewind` | Rewind code and/or conversation to a previous state |
+| `/fork [name]` | Create a fork of the current conversation at this point |
 
 ### Configuration and Setup
 
@@ -59,6 +60,29 @@ Claude Code ships with built-in commands invoked by typing `/` in the prompt:
 | `/export` | Export the conversation |
 | `/status` | Show version, account, and model information |
 | `/stats` | View usage statistics |
+| `/copy` | Copy last response to clipboard. Shows a picker when code blocks are present |
+| `/diff` | Interactive diff viewer for uncommitted changes and per-turn diffs |
+| `/fast [on\|off]` | Toggle fast mode (same model, faster output) |
+| `/review` | Review a pull request for quality, correctness, and security (requires `gh` CLI) |
+| `/tasks` | List and manage background tasks |
+| `/add-dir <path>` | Add a working directory to the current session |
+| `/vim` | Toggle vim editing mode |
+
+### Bash Mode
+
+Prefix your input with `!` to run a shell command directly without Claude interpreting it:
+
+```
+! npm test
+! git status
+! ls -la
+```
+
+The command runs immediately and its output is added to the conversation context. This is useful for quick shell operations while maintaining context. You can also press `Ctrl+B` to background a long-running `!` command.
+
+### Bundled Skills
+
+In addition to built-in commands, Claude Code ships with bundled skills (like `/simplify`, `/batch`, and `/debug`) that appear alongside built-in commands when you type `/`. These are pre-packaged skills rather than hardcoded commands, and you can create your own to extend the list.
 
 ## What Are Skills?
 
