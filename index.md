@@ -34,7 +34,7 @@ A comprehensive reference for using Claude Code effectively. This guide serves t
    The Task tool, available agent types (Explore, Plan, Bash, general-purpose), creating custom agents, parallelization strategies, and when to delegate vs. work inline.
 
 5. **[Skills and Slash Commands](05-skills-and-commands.md)**
-   What skills are, how to create and invoke them, built-in slash commands, string substitutions, and advanced skill patterns.
+   What skills are, how to create and invoke them, built-in slash commands, string substitutions, advanced skill patterns, and the Agent Skills open standard.
 
 6. **[MCP (Model Context Protocol)](06-mcp.md)**
    How MCP works, adding and configuring servers, authentication, popular servers, building custom servers, and best practices.

@@ -93,6 +93,8 @@ Skills are reusable instruction packages that Claude Code can invoke. They are l
 - A skill can be **domain knowledge** (e.g., coding conventions, API patterns)
 - A skill can be a **tool** (e.g., a code review process with specific criteria)
 
+Claude Code skills follow the [Agent Skills](https://agentskills.io) open standard, a portable format that works across many AI tools. Claude Code extends the standard with additional features like [invocation control](#invocation-modes), [subagent execution](#running-skills-in-subagents), and [dynamic context injection](#dynamic-context-with-shell-preprocessing). See [The Agent Skills Open Standard](#the-agent-skills-open-standard) at the end of this chapter for the cross-platform ecosystem.
+
 Skills are defined as markdown files with YAML frontmatter and stored in predictable locations.
 
 ## Creating Skills
@@ -386,6 +388,66 @@ For skills that run in a subagent (`context: fork`), `AskUserQuestion` is not av
 6. **Use user-level skills** (`~/.claude/skills/`) for personal preferences that apply across all projects.
 
 7. **Keep description accurate**: The description determines when Claude auto-invokes the skill. Be specific about the trigger conditions.
+
+## The Agent Skills Open Standard
+
+Claude Code skills are built on the **Agent Skills** open standard — a portable format for giving agents new capabilities. Anthropic developed the format for Claude Code, then released it as an open standard in December 2025, similar to how it open-sourced the Model Context Protocol (MCP).
+
+### How the Standard Works
+
+The standard defines a minimal, file-based format:
+
+- A skill is a directory containing a `SKILL.md` file with YAML frontmatter (`name` and `description` required) and markdown instructions
+- Skills can optionally include `scripts/`, `references/`, and `assets/` directories
+- Agents use **progressive disclosure**: at startup only skill names and descriptions are loaded (~100 tokens each); full instructions load when activated; supporting files load only when referenced
+
+This is the same format used by `.claude/skills/` in Claude Code. Any skill you write for Claude Code is already a valid Agent Skill.
+
+### Cross-Platform Compatibility
+
+The Agent Skills format is supported by a wide range of AI tools:
+
+| Category | Tools |
+| --- | --- |
+| AI coding agents | Cursor, GitHub Copilot, OpenAI Codex, JetBrains Junie, Roo Code, Amp |
+| CLI tools | Claude Code, Gemini CLI, Goose, OpenCode, Mistral Vibe |
+| Frameworks | Spring AI, LangChain (via Letta) |
+| Platforms | Databricks, Snowflake |
+
+A skill written once can work across all compatible tools. Claude Code-specific frontmatter fields (like `context`, `agent`, `hooks`) are ignored by other tools but don't cause errors.
+
+### The Standard vs. Claude Code Extensions
+
+The open standard defines these frontmatter fields:
+
+| Field | Required | Purpose |
+| --- | --- | --- |
+| `name` | Yes | Skill identifier (lowercase, hyphens, max 64 chars) |
+| `description` | Yes | What the skill does and when to use it (max 1024 chars) |
+| `license` | No | License name or reference to a bundled license file |
+| `compatibility` | No | Environment requirements (e.g., "Requires git, docker") |
+| `metadata` | No | Arbitrary key-value pairs (author, version, etc.) |
+| `allowed-tools` | No | Pre-approved tools the skill may use |
+
+Claude Code extends this with fields covered in [Frontmatter Options](#frontmatter-options): `argument-hint`, `disable-model-invocation`, `user-invocable`, `model`, `context`, `agent`, and `hooks`. It also adds [string substitutions](#string-substitutions) (`$ARGUMENTS`, `${CLAUDE_SKILL_DIR}`) and [shell preprocessing](#dynamic-context-with-shell-preprocessing) (`` !`command` ``), which are not part of the standard.
+
+### Skills Directory and Partner Integrations
+
+Anthropic maintains a [skills directory](https://claude.com/connectors) with partner-built skills from companies including Atlassian, Canva, Cloudflare, Figma, Notion, Ramp, Sentry, Stripe, and Zapier. These skills are available across Claude.ai, Claude Code, and the API at no additional cost on Pro, Max, Team, and Enterprise plans. You can browse and install skills from the ecosystem using the `/plugins` command.
+
+Example skills and the full specification are available at:
+
+- [agentskills.io](https://agentskills.io) — The open standard specification
+- [github.com/anthropics/skills](https://github.com/anthropics/skills) — Example skills from Anthropic
+- [github.com/agentskills/agentskills](https://github.com/agentskills/agentskills) — The standard's source repository
+
+### Writing Portable Skills
+
+To make skills that work across tools (not just Claude Code):
+
+1. **Stick to standard fields**: Use only `name`, `description`, `license`, `compatibility`, `metadata`, and `allowed-tools` in frontmatter
+2. **Keep instructions generic**: Avoid referencing Claude Code-specific tools by name where possible
+3. **Validate with the reference library**: Use [skills-ref](https://github.com/agentskills/agentskills/tree/main/skills-ref) to check format compliance
 
 ---
 
