@@ -108,6 +108,10 @@ claude auth logout
 
 # List configured custom agents
 claude agents
+
+# Remote control (external builds, named sessions)
+claude remote-control
+claude remote-control --name "my-task"
 ```
 
 ### IDE and App Integration

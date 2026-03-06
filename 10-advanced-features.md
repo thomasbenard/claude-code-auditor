@@ -17,6 +17,7 @@ Hooks are automated shell commands that execute at specific lifecycle events. Th
 | --- | --- | --- | --- |
 | `SessionStart` | Session begins or resumes | `startup`, `resume`, `clear`, `compact` | Environment setup, notifications |
 | `UserPromptSubmit` | Before Claude processes a prompt | (no matcher) | Input validation, logging |
+| `InstructionsLoaded` | Instructions file is loaded | (no matcher) | Post-processing, dynamic injection |
 | `PreToolUse` | Before a tool executes | Tool name | Block forbidden actions, validation |
 | `PermissionRequest` | Permission dialog appears | Tool name | Auto-approve/deny based on rules |
 | `PostToolUse` | After a tool succeeds | Tool name | Auto-format, lint, post-processing |
@@ -109,9 +110,19 @@ Each entry in the inner `hooks` array is a handler. There are four types:
   "tool_name": "Bash",
   "tool_input": {
     "command": "npm test"
+  },
+  "agent_id": "agent-abc",
+  "agent_type": "main",
+  "worktree": {
+    "name": "feature-auth",
+    "path": "/project/.claude/worktrees/feature-auth",
+    "branch": "feature-auth",
+    "originalRepo": "/project"
   }
 }
 ```
+
+The `agent_id` and `agent_type` fields identify which agent triggered the hook. The `worktree` object is present when Claude Code is running inside a worktree. For `Stop` and `SubagentStop` events, a `last_assistant_message` field contains Claude's final response text.
 
 **Output and exit codes**:
 - **Exit 0**: Allow the action. Stdout is added to Claude's context.
@@ -441,7 +452,11 @@ The Claude Code VS Code extension provides a graphical interface:
 - Inline diff review for proposed changes
 - @-mention files with line ranges (`@src/auth.ts#40-60`)
 - Multiple conversations in tabs
-- Plan mode with visual review
+- Plan mode with full markdown plan view and comment support
+- Spark icon in the activity bar listing all Claude Code sessions
+- Session management: rename and remove sessions from the sessions list
+- Native MCP server management dialog via `/mcp`
+- Compaction displayed as a collapsible "Compacted chat" card
 
 **Shortcuts:**
 | Shortcut | Action |

@@ -223,6 +223,10 @@ Claude can be configured to use "extended thinking" -- an internal reasoning ste
 
 Use extended thinking for complex debugging, architectural decisions, or multi-step reasoning. Disable it for simple tasks to save tokens.
 
+### Effort Levels
+
+Opus 4.6 defaults to **medium effort** for Max and Team subscribers, which is the sweet spot between speed and thoroughness for most tasks. To temporarily increase effort for a single turn, include the keyword **`ultrathink`** in your prompt -- this triggers high-effort extended thinking for that turn only, useful for especially complex reasoning or debugging.
+
 ## System Prompt
 
 The system prompt is a set of instructions injected at the start of every conversation. In Claude Code, the system prompt includes:

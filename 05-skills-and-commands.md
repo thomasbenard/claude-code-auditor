@@ -46,6 +46,7 @@ Claude Code ships with built-in commands invoked by typing `/` in the prompt:
 | --- | --- |
 | `/mcp` | Manage MCP (Model Context Protocol) servers |
 | `/plugins` | Browse and install plugins |
+| `/reload-plugins` | Activate pending plugin changes without restarting |
 | `/skills` | List all available skills |
 | `/agents` | Create and manage custom subagents |
 | `/hooks` | Configure lifecycle hooks |
@@ -166,6 +167,7 @@ Skills support dynamic content injection:
 | `$0`, `$1`, `$2` | Individual arguments by position |
 | `$ARGUMENTS[0]` | Same as `$0` |
 | `${CLAUDE_SESSION_ID}` | Current session identifier |
+| `${CLAUDE_SKILL_DIR}` | Absolute path to the skill's own directory (for referencing supporting files) |
 | `` !`command` `` | Output of a shell command (preprocessing) |
 
 If `$ARGUMENTS` does not appear anywhere in the skill content, any arguments the user passes are automatically appended as `ARGUMENTS: <value>` at the end.

@@ -173,7 +173,7 @@ Auto memory lives in a per-project directory under your home folder:
 └── decisions.md       ← Topic file
 ```
 
-The `<project-hash>` is derived from the project path, so each project gets its own separate memory. You can view and edit the `/memory` slash command to open these files directly.
+The `<project-hash>` is derived from the project path, so each project gets its own separate memory. Project configs and auto memory are **shared across git worktrees** of the same repository, so all worktrees see the same memory. You can view and edit memory files with the `/memory` slash command.
 
 ### How Auto Memory Works
 
@@ -277,7 +277,7 @@ Settings have a strict precedence order:
 
 | Scope | Location | Priority | Can override |
 | --- | --- | --- | --- |
-| **Managed** | System directory | Highest | Nothing (enforced) |
+| **Managed** | System directory (macOS plist / Windows Registry) | Highest | Nothing (enforced) |
 | **CLI flags** | Command line | 2nd | All below |
 | **Local** | `.claude/settings.local.json` | 3rd | Project, User |
 | **Project** | `.claude/settings.json` | 4th | User |
@@ -308,6 +308,8 @@ Settings have a strict precedence order:
   },
 
   "model": "claude-sonnet-4-6",
+
+  "includeGitInstructions": true,
 
   "hooks": {
     "PostToolUse": [
@@ -426,6 +428,30 @@ Customize keyboard shortcuts via `~/.claude/keybindings.json`:
 | `Alt+P` | Switch model |
 | `Alt+T` | Toggle extended thinking |
 | `Esc Esc` | Rewind/summarize |
+
+## Notable Settings
+
+| Setting | Type | Purpose |
+| --- | --- | --- |
+| `permissions.defaultMode` | string | Default permission mode (`default`, `acceptEdits`, `plan`, `dontAsk`, `bypassPermissions`) |
+| `model` | string | Default model to use |
+| `includeGitInstructions` | boolean | Include built-in git commit/PR instructions (default `true`). Set to `false` to remove them |
+| `sandbox.enableWeakerNetworkIsolation` | boolean | (macOS) Allow TLS verification for Go programs in sandboxed mode |
+
+## Claude Code Environment Variables
+
+In addition to setting environment variables for tools via the `env` key (described above), Claude Code recognizes several environment variables that control its own behavior:
+
+| Variable | Purpose |
+| --- | --- |
+| `ANTHROPIC_BASE_URL` | Use a third-party API gateway or proxy instead of the default Anthropic endpoint |
+| `CLAUDE_CODE_MAX_OUTPUT_TOKENS` | Cap the maximum output tokens per response |
+| `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Remove built-in git commit/PR instructions (same effect as `includeGitInstructions: false`) |
+| `CLAUDE_CODE_SIMPLE` | Minimal mode (reduced UI, includes file edit tool) |
+| `CLAUDE_CODE_DISABLE_1M_CONTEXT` | Disable the 1M extended context window |
+| `CLAUDE_BASH_NO_LOGIN` | Skip login shell initialization for Bash commands |
+
+Set these in your shell profile, CI environment, or in the `env` key of your settings file.
 
 ## Compact Instructions
 
