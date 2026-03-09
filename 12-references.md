@@ -142,6 +142,16 @@ GitHub repositories that aggregate skills, agents, plugins, and tools for Claude
 | [claude-code-ultimate-guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide) | Beginner-to-power-user guide with production-ready templates and quizzes |
 | [Awesome Claude](https://awesomeclaude.ai) | Visual directory and searchable index of Claude Code resources |
 
+## Communities
+
+Active discussion spaces where Claude Code users share workflows, get help, and connect with Anthropic engineers.
+
+| Community | Description |
+| --------- | ----------- |
+| [Anthropic Discord](https://discord.com/invite/6PPFFzqPDZ) | Official Anthropic community server — 67K+ members, peer help, product announcements, and occasional Anthropic engineer engagement |
+| [r/ClaudeCode](https://www.reddit.com/r/ClaudeCode/) | Dedicated Claude Code subreddit — 96K+ members sharing workflows, multi-agent setups, debugging sessions, and cost analyses |
+| [r/ClaudeAI](https://www.reddit.com/r/ClaudeAI/) | Broader Claude community — model comparisons, feature requests, and general use cases across all Claude products |
+
 ## Ranking Guides
 
 These meta-resources help you find the best content without watching or reading everything yourself.
@@ -156,7 +166,7 @@ Claude Code evolves rapidly. Here's how to keep up:
 
 - **Release notes**: Watch the [claude-code GitHub repo](https://github.com/anthropics/claude-code) for new releases
 - **Anthropic blog**: Subscribe to [claude.com/blog](https://claude.com/blog) for feature announcements
-- **X / Twitter**: Follow [@AnthropicAI](https://x.com/AnthropicAI) and [@ClaudeCode](https://x.com/ClaudeCode) for real-time updates
+- **X / Twitter**: Follow [@AnthropicAI](https://x.com/AnthropicAI) and [@ClaudeCode](https://x.com/ClaudeCode) for real-time updates. Also follow [@bcherny](https://x.com/bcherny) (Boris Cherny, Claude Code creator) for tips, internal team workflows, and roadmap previews straight from the source.
 - **Community lists**: Star the awesome-claude-code repos above — they're updated frequently by the community
 
 ---
