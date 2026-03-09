@@ -397,6 +397,244 @@ For skills that run in a subagent (`context: fork`), `AskUserQuestion` is not av
 
 7. **Keep description accurate**: The description determines when Claude auto-invokes the skill. Be specific about the trigger conditions.
 
+## Plugins
+
+Plugins are the distribution mechanism for Claude Code extensions. While skills, agents, hooks, and MCP servers can all exist as standalone configuration in your `.claude/` directory, a plugin packages them together as a versioned, namespaced, distributable unit.
+
+| Approach | Skill names | Best for |
+| --- | --- | --- |
+| Standalone (`.claude/` directory) | `/hello` | Personal workflows, project-specific customizations, quick experiments |
+| Plugins (with `.claude-plugin/plugin.json`) | `/plugin-name:hello` | Sharing with teammates, distributing to community, versioned releases, reusable across projects |
+
+A single plugin can bundle any combination of:
+
+- **Skills** — Slash commands and agent skills
+- **Agents** — Custom subagents
+- **Hooks** — Event handlers (PreToolUse, PostToolUse, Stop, etc.)
+- **MCP servers** — External tool connections
+- **LSP servers** — Code intelligence via the Language Server Protocol
+- **Output styles** — Response formatting
+- **Default settings** — Currently only the `agent` key
+
+Plugins require Claude Code version 1.0.33 or later.
+
+### Installing Plugins
+
+Use the `/plugin` command inside Claude Code to open the plugin manager, a tabbed interface with four tabs:
+
+| Tab | Purpose |
+| --- | --- |
+| Discover | Browse available plugins from all added marketplaces |
+| Installed | View and manage installed plugins (enable, disable, uninstall) |
+| Marketplaces | Add, remove, or update marketplace sources |
+| Errors | View any plugin loading errors |
+
+Cycle between tabs with `Tab` / `Shift+Tab`.
+
+You can also install directly from the prompt or the CLI:
+
+```bash
+# From within Claude Code
+/plugin install code-review@claude-plugins-official
+
+# From the shell (non-interactive)
+claude plugin install code-review@claude-plugins-official
+```
+
+The format is always `plugin-name@marketplace-name`.
+
+### Managing Plugins
+
+The full set of CLI commands:
+
+| Command | Purpose |
+| --- | --- |
+| `claude plugin install <name>@<marketplace>` | Install a plugin |
+| `claude plugin uninstall <name>@<marketplace>` | Remove a plugin (aliases: `remove`, `rm`) |
+| `claude plugin enable <name>@<marketplace>` | Re-enable a disabled plugin |
+| `claude plugin disable <name>@<marketplace>` | Disable without uninstalling |
+| `claude plugin update <name>@<marketplace>` | Update to the latest version |
+| `claude plugin validate .` | Validate a plugin or marketplace directory |
+
+All commands accept `--scope <scope>` with values: `user` (default), `project`, `local`, or `managed` (update only).
+
+Inside Claude Code, use `/reload-plugins` to activate pending plugin changes without restarting. If any LSP servers were added or updated, a full restart is required.
+
+### Plugin Scoping
+
+Plugins can be installed at different levels, just like settings:
+
+| Scope | Settings file | Use case |
+| --- | --- | --- |
+| `user` (default) | `~/.claude/settings.json` | Personal plugins across all projects |
+| `project` | `.claude/settings.json` | Team plugins shared via version control |
+| `local` | `.claude/settings.local.json` | Project-specific plugins, gitignored |
+| `managed` | Managed settings (read-only) | Organization-deployed plugins |
+
+Installed plugins are tracked in the `enabledPlugins` key of the relevant settings file:
+
+```json
+{
+  "enabledPlugins": {
+    "formatter@acme-tools": true,
+    "deployer@acme-tools": true,
+    "analyzer@security-plugins": false
+  }
+}
+```
+
+Set a value to `false` to disable a plugin without uninstalling it.
+
+### Namespacing
+
+All plugin components are namespaced by the plugin's `name` field to prevent conflicts:
+
+- Skills: `/plugin-name:skill-name` (e.g., `/commit-commands:commit`)
+- Agents: `plugin-name:agent-name` (e.g., `plugin-dev:agent-creator`)
+- MCP servers, hooks, and LSP servers integrate seamlessly but are scoped to the plugin
+
+This means multiple plugins can define a skill called `review` without conflicting — each is invoked as `/plugin-a:review` and `/plugin-b:review`.
+
+### Marketplaces
+
+A marketplace is a catalog of plugins defined by a `.claude-plugin/marketplace.json` file.
+
+**The official Anthropic marketplace** (`claude-plugins-official`) is automatically available when you start Claude Code. It includes LSP plugins for major languages (TypeScript, Python, Rust, Go, Java, and more), integrations with services like GitHub, Jira, Notion, Figma, Sentry, and Vercel, plus development workflow plugins and output styles.
+
+To add third-party marketplaces:
+
+```bash
+# GitHub repository
+/plugin marketplace add owner/repo
+
+# Git URL
+/plugin marketplace add https://gitlab.com/company/plugins.git
+
+# Local path (for development)
+/plugin marketplace add ./my-marketplace
+
+# Remote URL
+/plugin marketplace add https://example.com/marketplace.json
+```
+
+Other marketplace commands:
+
+```bash
+/plugin marketplace list                   # List all marketplaces
+/plugin marketplace update marketplace-name  # Refresh catalog
+/plugin marketplace remove marketplace-name  # Remove (also uninstalls its plugins)
+```
+
+The shorthand `/plugin market` also works.
+
+**Auto-updates**: Official Anthropic marketplaces auto-update by default. Third-party marketplaces have auto-update disabled by default. Toggle per-marketplace via the `/plugin` Marketplaces tab.
+
+### Creating Plugins
+
+A plugin is a directory with this structure:
+
+```
+my-plugin/
+├── .claude-plugin/
+│   └── plugin.json          # Manifest (optional but recommended)
+├── skills/                  # Skills (SKILL.md in subdirectories)
+│   └── code-review/
+│       └── SKILL.md
+├── agents/                  # Agent markdown files
+├── hooks/
+│   └── hooks.json           # Event handlers
+├── scripts/                 # Hook and utility scripts
+├── .mcp.json                # MCP server configurations
+├── .lsp.json                # LSP server configurations
+├── settings.json            # Default settings
+└── README.md
+```
+
+Only `plugin.json` goes inside `.claude-plugin/`. All other directories must be at the plugin root.
+
+The manifest (`.claude-plugin/plugin.json`) declares the plugin's metadata:
+
+```json
+{
+  "name": "my-plugin",
+  "version": "1.0.0",
+  "description": "What this plugin does",
+  "author": { "name": "Your Name" },
+  "license": "MIT"
+}
+```
+
+If the manifest is omitted, Claude Code auto-discovers components in default locations and derives the plugin name from the directory name. The manifest can also specify custom paths for components:
+
+```json
+{
+  "name": "my-plugin",
+  "version": "1.0.0",
+  "skills": "./custom/skills/",
+  "agents": "./custom/agents/",
+  "hooks": "./config/hooks.json",
+  "mcpServers": "./mcp-config.json",
+  "lspServers": "./.lsp.json",
+  "outputStyles": "./styles/"
+}
+```
+
+Inside hook scripts and MCP configs, the environment variable `${CLAUDE_PLUGIN_ROOT}` resolves to the absolute path of the plugin directory.
+
+To test a plugin during development, load it from a local directory:
+
+```bash
+claude --plugin-dir ./my-plugin
+claude --plugin-dir ./plugin-one --plugin-dir ./plugin-two
+```
+
+Validate your plugin structure with:
+
+```bash
+claude plugin validate .
+```
+
+### Publishing Plugins
+
+There are two ways to distribute plugins:
+
+1. **Your own marketplace**: Create a repository with a `.claude-plugin/marketplace.json` that lists your plugins. Users add it with `/plugin marketplace add owner/repo`.
+
+2. **The official Anthropic marketplace**: Submit your plugin at `claude.ai/settings/plugins/submit` or `platform.claude.com/plugins/submit`.
+
+A minimal `marketplace.json`:
+
+```json
+{
+  "name": "company-tools",
+  "owner": { "name": "DevTools Team" },
+  "plugins": [
+    {
+      "name": "code-formatter",
+      "source": "./plugins/formatter",
+      "description": "Auto-formats code on save",
+      "version": "2.1.0"
+    }
+  ]
+}
+```
+
+Plugin sources in marketplace entries can be relative paths, GitHub repos, Git URLs, Git subdirectories (sparse clone for monorepos), npm packages, or pip packages.
+
+### Organization Plugin Management
+
+Organizations can control plugin usage through managed settings:
+
+| Setting | Purpose |
+| --- | --- |
+| `enabledPlugins` | Auto-install and enable specific plugins |
+| `extraKnownMarketplaces` | Pre-configure marketplaces for team members |
+| `strictKnownMarketplaces` | Allowlist restricting which marketplaces users can add |
+| `blockedMarketplaces` | Blocklist checked before downloading |
+| `pluginTrustMessage` | Custom message appended to the trust warning before installation |
+
+These are set in managed settings and cannot be overridden by individual users.
+
 ## The Agent Skills Open Standard
 
 Claude Code skills are built on the **Agent Skills** open standard — a portable format for giving agents new capabilities. Anthropic developed the format for Claude Code, then released it as an open standard in December 2025, similar to how it open-sourced the Model Context Protocol (MCP).
