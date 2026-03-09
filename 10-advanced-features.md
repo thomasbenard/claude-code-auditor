@@ -464,7 +464,7 @@ Under the hood, scheduled tasks use three tools:
 
 A session can hold up to 50 tasks. Recurring tasks expire after 3 days. Disable scheduling entirely with `CLAUDE_CODE_DISABLE_CRON=1`.
 
-For durable scheduling that survives restarts, use the Desktop app's scheduled tasks or GitHub Actions with a `schedule` trigger.
+For durable scheduling that survives restarts, use the [Desktop app's scheduled tasks](https://support.claude.com/en/articles/13854387-schedule-recurring-tasks-in-cowork) or GitHub Actions with a `schedule` trigger.
 
 ## MCP (Model Context Protocol)
 
