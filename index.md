@@ -31,7 +31,7 @@ A comprehensive reference for using Claude Code effectively. This guide serves t
    Complete reference for every built-in tool: Read, Write, Edit, Glob, Grep, Bash, WebFetch, WebSearch, TodoWrite, AskUserQuestion, and more. When to use each and best practices.
 
 4. **[Subagents and Task Delegation](04-subagents.md)**
-   The Task tool, available agent types (Explore, Plan, Bash, general-purpose), creating custom agents, parallelization strategies, and when to delegate vs. work inline.
+   The Task tool, available agent types (Explore, Plan, Bash, general-purpose), creating custom agents, parallelization strategies, agent teams for multi-session collaboration, and when to delegate vs. work inline.
 
 5. **[Skills and Slash Commands](05-skills-and-commands.md)**
    What skills are, how to create and invoke them, built-in slash commands, string substitutions, advanced skill patterns, and the Agent Skills open standard.
@@ -75,6 +75,7 @@ A comprehensive reference for using Claude Code effectively. This guide serves t
 | Understand what tokens are            | [Core AI Concepts](02-core-ai-concepts.md)       |
 | Know which tool to use                | [Tools Reference](03-tools-reference.md)         |
 | Delegate work to subagents            | [Subagents](04-subagents.md)                     |
+| Orchestrate a team of agents          | [Subagents](04-subagents.md)                     |
 | Create custom skills                  | [Skills and Commands](05-skills-and-commands.md)  |
 | Set up MCP servers                    | [MCP](06-mcp.md)                                 |
 | Configure my project                  | [Project Setup](08-project-setup.md)             |
