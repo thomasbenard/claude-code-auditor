@@ -58,6 +58,11 @@ A comprehensive reference for using Claude Code effectively. This guide serves t
 11. **[Troubleshooting and Optimization](11-troubleshooting.md)**
     Context management, reducing token waste, debugging common issues, performance tips, and understanding costs.
 
+### References
+
+12. **[References and Resources](12-references.md)**
+    Curated blogs, YouTube channels, podcasts, courses, and community resources for learning Claude Code.
+
 ---
 
 ## How to Use This Guide
@@ -85,4 +90,5 @@ A comprehensive reference for using Claude Code effectively. This guide serves t
 | Continue a session from another device | [Advanced Features](10-advanced-features.md)    |
 | Schedule recurring prompts             | [Advanced Features](10-advanced-features.md)    |
 | Fix context or performance issues     | [Troubleshooting](11-troubleshooting.md)         |
+| Find blogs, videos, and courses       | [References](12-references.md)                   |
 | Audit a project's Claude Code setup   | `/audit-claude-setup` skill in `.claude/skills/` |
