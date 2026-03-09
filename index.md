@@ -86,6 +86,7 @@ A comprehensive reference for using Claude Code effectively. This guide serves t
 | Set up MCP servers                    | [MCP](06-mcp.md)                                 |
 | Configure my project                  | [Project Setup](08-project-setup.md)             |
 | Write better prompts                  | [Effective Prompting](09-effective-prompting.md)  |
+| Test frontend with Playwright CLI      | [Advanced Features](10-advanced-features.md)     |
 | Set up hooks or worktrees             | [Advanced Features](10-advanced-features.md)     |
 | Continue a session from another device | [Advanced Features](10-advanced-features.md)    |
 | Schedule recurring prompts             | [Advanced Features](10-advanced-features.md)    |

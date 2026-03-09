@@ -560,14 +560,94 @@ Claude Code Desktop provides a native application interface for macOS and Window
 
 ## Browser Automation
 
-Claude Code can interact with browsers via the Claude in Chrome extension and MCP:
+Claude Code can interact with browsers in two ways: through **Playwright CLI** (recommended) and through MCP browser servers. For frontend testing and visual verification, Playwright CLI is the preferred approach -- it is dramatically more token-efficient and requires no server setup.
 
-- Navigate web pages
-- Read page content (accessibility trees, screenshots)
-- Fill forms and click elements
-- Execute JavaScript in page context
-- Record GIF demos
-- Take screenshots for visual verification
+### Playwright CLI
+
+[Playwright CLI](https://github.com/microsoft/playwright-cli) (`@playwright/cli`) is a command-line tool built specifically for AI coding agents. Instead of running a persistent MCP server, Claude uses simple shell commands via Bash to control a browser. Screenshots and snapshots are saved to disk rather than streamed into the conversation context, which saves significant tokens.
+
+#### Installation
+
+```bash
+# Install globally
+npm install -g @playwright/cli@latest
+
+# Or install as a Claude Code skill (auto-discovered)
+playwright-cli install --skills
+```
+
+The skill-based installation scaffolds a `.claude/skills/playwright-cli/` directory in your project, which Claude Code auto-discovers. You can also install it via the Agent Skills standard:
+
+```bash
+npx skills add https://github.com/microsoft/playwright-cli --skill playwright-cli
+```
+
+#### Core Commands
+
+| Command | Purpose |
+| --- | --- |
+| `playwright-cli open [url]` | Launch browser (headless by default, `--headed` for visible) |
+| `playwright-cli snapshot` | Capture a compact YAML accessibility snapshot with element references |
+| `playwright-cli screenshot` | Save screenshot to disk (`--filename` to specify path) |
+| `playwright-cli click <ref>` | Click an element by reference ID from snapshot |
+| `playwright-cli fill <ref> <text>` | Fill a form field by reference |
+| `playwright-cli pdf` | Generate PDF to disk |
+
+#### Example Workflow
+
+A typical frontend verification loop looks like this:
+
+```bash
+# 1. Open the local dev server
+playwright-cli open http://localhost:3000/login
+
+# 2. Take a snapshot to see the page structure
+playwright-cli snapshot
+# Output: YAML with element references like e1, e5, e21
+
+# 3. Fill in the login form
+playwright-cli fill e5 "user@example.com"
+playwright-cli fill e8 "password123"
+playwright-cli click e12
+
+# 4. Screenshot the result
+playwright-cli screenshot --filename login-result.png
+```
+
+Claude reads the snapshot file to understand page structure, and only reads the screenshot when visual verification is actually needed -- keeping token usage minimal.
+
+#### Why Playwright CLI Replaces MCP for Frontend Testing
+
+| Aspect | Playwright CLI | Browser MCP (Puppeteer/Playwright) |
+| --- | --- | --- |
+| **Token cost** | ~27k tokens per typical task | ~114k tokens per typical task |
+| **Upfront overhead** | ~68 tokens (skill description) | ~3,600 tokens (tool schemas loaded at session start) |
+| **Data flow** | Saves to disk; agent reads selectively | Streams into context (screenshots, accessibility trees) |
+| **Setup** | `npm install -g @playwright/cli` | `claude mcp add ...`, server lifecycle management |
+| **Composability** | Chain with `&&`, pipes, shell scripts | Isolated MCP tool calls |
+| **Server management** | None -- stateless commands | Must start, maintain, and debug server process |
+
+**The core insight**: MCP browser servers load tool schemas into every API call and stream full accessibility trees and screenshots directly into the conversation. Playwright CLI saves everything to disk and lets Claude decide what to read, cutting token consumption by 4-10x.
+
+**Use MCP browser automation only when**:
+- The agent lacks shell/filesystem access (sandboxed environments)
+- You need continuous browser state across many interactions without explicit session management
+- You are using the Claude in Chrome extension for live browser interaction
+
+### Quick Screenshots with `npx playwright`
+
+If you don't need full browser automation, the standard `playwright` npm package includes lightweight CLI commands for one-off tasks:
+
+```bash
+# Screenshot a URL (no install needed beyond playwright)
+npx playwright screenshot https://localhost:3000 home.png
+npx playwright screenshot --full-page --device="iPhone 13" https://localhost:3000 mobile.png
+
+# Generate a PDF
+npx playwright pdf https://localhost:3000/report report.pdf
+```
+
+These are useful for quick visual checks without installing `@playwright/cli`.
 
 ### Preview System
 
