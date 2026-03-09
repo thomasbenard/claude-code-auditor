@@ -65,7 +65,20 @@ For each planned change:
 3. **Add new content** -- Place in the most logical location within the chapter, matching the existing heading hierarchy and depth of coverage
 4. **Update cross-references** -- If a section is renamed, moved, or removed, update all links across all chapters and `index.md`
 
-## Step 5: Verify Consistency
+## Step 5: Log Changes
+
+After applying updates, append a summary entry to `13-changelog.md`. Insert it directly above the `---` / `Back to [Index]` footer, using this format:
+
+```markdown
+## YYYY-MM-DD
+
+- **<chapter-file.md>**: Brief summary of what changed (e.g., "Updated hooks section to reflect new `pre-tool` event")
+- **<other-chapter.md>**: Brief summary
+```
+
+Each bullet should be one sentence describing the change at a high level — not every line edited, just enough for a reader to understand what was updated and where. Group all changes from a single `/update-book` run under one date heading. If there's already an entry for today's date, append bullets to the existing section rather than creating a duplicate heading.
+
+## Step 6: Verify Consistency
 
 After all edits:
 

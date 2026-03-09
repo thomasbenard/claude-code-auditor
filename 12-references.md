@@ -171,4 +171,4 @@ Claude Code evolves rapidly. Here's how to keep up:
 
 ---
 
-Back to [Index](index.md)
+Next: [Changelog](13-changelog.md)
