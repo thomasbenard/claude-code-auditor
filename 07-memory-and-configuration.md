@@ -435,8 +435,11 @@ Customize keyboard shortcuts via `~/.claude/keybindings.json`:
 | --- | --- | --- |
 | `permissions.defaultMode` | string | Default permission mode (`default`, `acceptEdits`, `plan`, `dontAsk`, `bypassPermissions`) |
 | `model` | string | Default model to use |
+| `attribution.commit` | string | Text appended to git commit messages (replaces deprecated `includeCoAuthoredBy`) |
+| `attribution.pr` | string | Text appended to pull request bodies |
 | `includeGitInstructions` | boolean | Include built-in git commit/PR instructions (default `true`). Set to `false` to remove them |
 | `sandbox.enableWeakerNetworkIsolation` | boolean | (macOS) Allow TLS verification for Go programs in sandboxed mode |
+| `cleanupPeriodDays` | number | Delete inactive sessions after N days (default 30) |
 
 ## Claude Code Environment Variables
 
@@ -449,6 +452,8 @@ In addition to setting environment variables for tools via the `env` key (descri
 | `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Remove built-in git commit/PR instructions (same effect as `includeGitInstructions: false`) |
 | `CLAUDE_CODE_SIMPLE` | Minimal mode (reduced UI, includes file edit tool) |
 | `CLAUDE_CODE_DISABLE_1M_CONTEXT` | Disable the 1M extended context window |
+| `CLAUDE_CODE_DISABLE_CRON` | Disable scheduled tasks and the `/loop` command |
+| `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` | Disable background task functionality |
 | `CLAUDE_BASH_NO_LOGIN` | Skip login shell initialization for Bash commands |
 
 Set these in your shell profile, CI environment, or in the `env` key of your settings file.

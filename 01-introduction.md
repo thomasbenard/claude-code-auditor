@@ -33,7 +33,7 @@ Claude Code does not directly access your filesystem or run commands. Instead, i
 - **File tools**: Read, Write, Edit, Glob, Grep
 - **Execution tools**: Bash
 - **Search tools**: WebSearch, WebFetch
-- **Orchestration tools**: Task (subagents), TodoWrite, AskUserQuestion
+- **Orchestration tools**: Agent (subagents), TodoWrite, AskUserQuestion
 - **Mode tools**: EnterPlanMode, EnterWorktree
 
 Each tool has defined parameters and behaviors. When Claude calls a tool, the system executes it and returns the result. Some tools require your permission before executing (like editing files or running shell commands), depending on your permission mode.

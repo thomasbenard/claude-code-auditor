@@ -9,7 +9,7 @@ Subagents are one of Claude Code's most powerful features. They let you spawn is
 
 ## What Are Subagents?
 
-A subagent is a separate Claude instance launched via the **Task** tool. Each subagent:
+A subagent is a separate Claude instance launched via the **Agent** tool (previously called "Task"; the old name still works as an alias). Each subagent:
 
 - Runs in its own context window (independent of the main conversation)
 - Has access to a specific set of tools
@@ -25,7 +25,7 @@ Think of subagents as delegating work to a specialist. You give them a clear bri
 | Agent type | Tools available | Model | Best for |
 | --- | --- | --- | --- |
 | **Explore** | Read-only (Glob, Grep, Read) | Haiku | Fast codebase exploration and search |
-| **Plan** | Read-only (all except Edit, Write, Task) | Inherited | Research and planning before implementation |
+| **Plan** | Read-only (all except Edit, Write, Agent) | Inherited | Research and planning before implementation |
 | **Bash** | Bash only | Inherited | Running commands in a separate context |
 | **general-purpose** | All tools | Inherited | Complex multi-step tasks |
 | **claude-code-guide** | Glob, Grep, Read, WebFetch, WebSearch | Haiku | Answering questions about Claude Code itself |
@@ -90,11 +90,11 @@ Specialized for answering questions about Claude Code itself. Uses Haiku for spe
 - Understanding how a specific tool works
 - Finding documentation about configuration options
 
-## Using the Task Tool
+## Using the Agent Tool
 
 ### Basic Syntax
 
-The Task tool takes these key parameters:
+The Agent tool takes these key parameters:
 
 - `prompt` (required): Detailed description of what the agent should do
 - `subagent_type` (required): Which agent type to use
@@ -143,7 +143,7 @@ The bad prompt fails because the subagent has no idea what you were looking at.
 When a subagent finishes, it returns an `agentId`. You can resume it to continue where it left off:
 
 ```
-Task(resume: "agent-id-here", prompt: "Now also check the middleware folder")
+Agent(resume: "agent-id-here", prompt: "Now also check the middleware folder")
 ```
 
 This preserves the agent's entire previous context, so you don't need to repeat the original prompt.
@@ -158,9 +158,9 @@ Launch multiple Explore agents at once:
 
 ```
 # These three run simultaneously:
-Task(subagent_type="Explore", prompt="Find all database models and their relationships")
-Task(subagent_type="Explore", prompt="Find all API route definitions")
-Task(subagent_type="Explore", prompt="Find all test files and test patterns used")
+Agent(subagent_type="Explore", prompt="Find all database models and their relationships")
+Agent(subagent_type="Explore", prompt="Find all API route definitions")
+Agent(subagent_type="Explore", prompt="Find all test files and test patterns used")
 ```
 
 All three complete independently, and you get results from all of them to synthesize.
@@ -171,8 +171,8 @@ For independent code changes:
 
 ```
 # These can run in parallel if they touch different files:
-Task(subagent_type="general-purpose", prompt="Add input validation to the /users endpoint")
-Task(subagent_type="general-purpose", prompt="Add logging to the /payments endpoint")
+Agent(subagent_type="general-purpose", prompt="Add input validation to the /users endpoint")
+Agent(subagent_type="general-purpose", prompt="Add logging to the /payments endpoint")
 ```
 
 **Caution**: Don't parallelize agents that modify the same files -- they'll conflict.
@@ -181,11 +181,11 @@ Task(subagent_type="general-purpose", prompt="Add logging to the /payments endpo
 
 ```
 # Phase 1: Research in parallel
-agent1 = Task(subagent_type="Explore", prompt="How does the current auth system work?")
-agent2 = Task(subagent_type="Explore", prompt="What test patterns does this project use?")
+agent1 = Agent(subagent_type="Explore", prompt="How does the current auth system work?")
+agent2 = Agent(subagent_type="Explore", prompt="What test patterns does this project use?")
 
 # Phase 2: Implement using research results
-Task(subagent_type="general-purpose", prompt="Based on the auth system findings: ...")
+Agent(subagent_type="general-purpose", prompt="Based on the auth system findings: ...")
 ```
 
 ## Creating Custom Agents

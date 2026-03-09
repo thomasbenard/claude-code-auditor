@@ -31,7 +31,7 @@ A comprehensive reference for using Claude Code effectively. This guide serves t
    Complete reference for every built-in tool: Read, Write, Edit, Glob, Grep, Bash, WebFetch, WebSearch, TodoWrite, AskUserQuestion, and more. When to use each and best practices.
 
 4. **[Subagents and Task Delegation](04-subagents.md)**
-   The Task tool, available agent types (Explore, Plan, Bash, general-purpose), creating custom agents, parallelization strategies, agent teams for multi-session collaboration, and when to delegate vs. work inline.
+   The Agent tool (formerly Task), available agent types (Explore, Plan, Bash, general-purpose), creating custom agents, parallelization strategies, agent teams for multi-session collaboration, and when to delegate vs. work inline.
 
 5. **[Skills and Slash Commands](05-skills-and-commands.md)**
    What skills are, how to create and invoke them, built-in slash commands, string substitutions, advanced skill patterns, and the Agent Skills open standard.
@@ -53,7 +53,7 @@ A comprehensive reference for using Claude Code effectively. This guide serves t
    How to write effective prompts, iterative workflows, using plan mode, managing large tasks, and getting the best results.
 
 10. **[Advanced Features](10-advanced-features.md)**
-    Hooks, worktrees, IDE integrations, headless mode, CI/CD usage, and extending Claude Code.
+    Hooks, worktrees, remote control, scheduled tasks, IDE integrations, headless mode, CI/CD usage, and extending Claude Code.
 
 11. **[Troubleshooting and Optimization](11-troubleshooting.md)**
     Context management, reducing token waste, debugging common issues, performance tips, and understanding costs.
@@ -81,5 +81,7 @@ A comprehensive reference for using Claude Code effectively. This guide serves t
 | Configure my project                  | [Project Setup](08-project-setup.md)             |
 | Write better prompts                  | [Effective Prompting](09-effective-prompting.md)  |
 | Set up hooks or worktrees             | [Advanced Features](10-advanced-features.md)     |
+| Continue a session from another device | [Advanced Features](10-advanced-features.md)    |
+| Schedule recurring prompts             | [Advanced Features](10-advanced-features.md)    |
 | Fix context or performance issues     | [Troubleshooting](11-troubleshooting.md)         |
 | Audit a project's Claude Code setup   | `/audit-claude-setup` skill in `.claude/skills/` |

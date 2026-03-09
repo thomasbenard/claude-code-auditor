@@ -64,7 +64,7 @@ Claude Code ships with built-in commands invoked by typing `/` in the prompt:
 | `/copy` | Copy last response to clipboard. Shows a picker when code blocks are present |
 | `/diff` | Interactive diff viewer for uncommitted changes and per-turn diffs |
 | `/fast [on\|off]` | Toggle fast mode (same model, faster output) |
-| `/review` | Review a pull request for quality, correctness, and security (requires `gh` CLI) |
+| `/review` | *Deprecated.* Install the `code-review` plugin instead: `claude plugin install code-review@claude-code-marketplace` |
 | `/tasks` | List and manage background tasks |
 | `/add-dir <path>` | Add a working directory to the current session |
 | `/vim` | Toggle vim editing mode |
@@ -83,7 +83,15 @@ The command runs immediately and its output is added to the conversation context
 
 ### Bundled Skills
 
-In addition to built-in commands, Claude Code ships with bundled skills (like `/simplify`, `/batch`, and `/debug`) that appear alongside built-in commands when you type `/`. These are pre-packaged skills rather than hardcoded commands, and you can create your own to extend the list.
+In addition to built-in commands, Claude Code ships with bundled skills that appear alongside built-in commands when you type `/`. These are pre-packaged skills rather than hardcoded commands, and you can create your own to extend the list.
+
+| Bundled skill | Purpose |
+| --- | --- |
+| `/simplify` | Reviews recently changed files for code reuse, quality, and efficiency issues, then fixes them. Spawns three parallel review agents |
+| `/batch <instruction>` | Orchestrates large-scale changes across a codebase in parallel, spawning one background agent per work unit in isolated worktrees |
+| `/debug [description]` | Troubleshoots the current session by reading the debug log. Optionally describe the issue to focus analysis |
+| `/loop [interval] <prompt>` | Runs a prompt repeatedly on an interval (default 10m). Useful for polling deploys, babysitting PRs, or re-running a skill on a schedule |
+| `/claude-api` | Loads Claude API and Agent SDK reference material for your project's language. Also activates automatically when code imports `anthropic` or `@anthropic-ai/sdk` |
 
 ## What Are Skills?
 
@@ -369,7 +377,7 @@ Generate comprehensive tests for: $ARGUMENTS
 
 Because skills run in the main agent context (not in a subagent), they have access to the `AskUserQuestion` tool. This means a skill can pause mid-execution to ask the user clarifying questions with multiple-choice options before continuing.
 
-This is a key difference from subagents spawned via the Task tool, where `AskUserQuestion` is **not** available. If your workflow needs to gather user input at runtime, implement it as a skill rather than a custom agent.
+This is a key difference from subagents spawned via the Agent tool, where `AskUserQuestion` is **not** available. If your workflow needs to gather user input at runtime, implement it as a skill rather than a custom agent.
 
 For skills that run in a subagent (`context: fork`), `AskUserQuestion` is not available — the skill runs in an isolated context that cannot prompt the user.
 

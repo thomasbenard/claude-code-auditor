@@ -288,9 +288,9 @@ pattern="import.*from ['\"](react|vue)"  type="ts"  # Framework imports
 - Use `multiSelect: true` when choices aren't mutually exclusive
 - Put the recommended option first with "(Recommended)" label
 
-### Task (Subagents)
+### Agent (Subagents)
 
-**Purpose**: Launch specialized agents for complex, multi-step work.
+**Purpose**: Launch specialized agents for complex, multi-step work. (This tool was previously called "Task" and was renamed to "Agent" in v2.1.63; the old name still works as an alias.)
 
 This is covered extensively in [Chapter 4: Subagents](04-subagents.md).
 

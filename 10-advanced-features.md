@@ -382,6 +382,90 @@ git worktree remove .claude/worktrees/feature-auth
 git worktree prune
 ```
 
+## Remote Control
+
+Remote Control lets you continue a local Claude Code session from your phone, tablet, or any browser via [claude.ai/code](https://claude.ai/code) or the Claude mobile app. The session runs entirely on your machine -- the web/mobile interface is just a window into it.
+
+### Starting a Remote Control Session
+
+```bash
+# Start a new remote-controlled session
+claude remote-control
+
+# With a custom name
+claude remote-control --name "Auth Refactor"
+
+# From an existing interactive session
+/remote-control
+```
+
+The terminal displays a session URL and a QR code (press spacebar to toggle). Open the URL in a browser or scan the QR code from the Claude mobile app.
+
+### How It Works
+
+- Your local filesystem, MCP servers, tools, and project configuration remain available
+- The conversation stays in sync across all connected devices -- send messages from terminal, browser, and phone interchangeably
+- If your laptop sleeps or network drops, the session reconnects automatically when your machine comes back online
+- All traffic goes through the Anthropic API over TLS; no inbound ports are opened on your machine
+
+### Remote Control vs Claude Code on the Web
+
+| | Remote Control | Claude Code on the Web |
+| --- | --- | --- |
+| **Where it runs** | Your local machine | Anthropic cloud infrastructure |
+| **Local tools** | Full access to filesystem, MCP, project config | Cloud environment only |
+| **Best for** | Continuing in-progress local work from another device | Starting tasks with no local setup, repos you don't have cloned |
+
+### Enabling for All Sessions
+
+By default, Remote Control only activates when you explicitly run the command. To enable it automatically for every session, run `/config` and set **Enable Remote Control for all sessions** to `true`.
+
+### Related Commands
+
+- `/desktop` (alias `/app`): Hand off the current session to the Claude Code Desktop app for visual diff review (macOS and Windows)
+- `/mobile` (alias `/ios`, `/android`): Show QR code to download the Claude mobile app
+
+## Scheduled Tasks
+
+Claude Code can run prompts automatically on a schedule within a session. Tasks are session-scoped: they fire while the session is open and are gone when you exit.
+
+### The /loop Skill
+
+The quickest way to schedule a recurring prompt:
+
+```
+/loop 5m check if the deployment finished
+/loop 20m /review-pr 1234
+/loop check the build          # defaults to every 10 minutes
+```
+
+Supported intervals: `s` (seconds, rounded up to nearest minute), `m` (minutes), `h` (hours), `d` (days).
+
+### One-Time Reminders
+
+Describe what you want in natural language:
+
+```
+remind me at 3pm to push the release branch
+in 45 minutes, check whether the integration tests passed
+```
+
+Claude schedules a single-fire cron task that deletes itself after running.
+
+### Underlying Cron Tools
+
+Under the hood, scheduled tasks use three tools:
+
+| Tool | Purpose |
+| --- | --- |
+| `CronCreate` | Schedule a new task with a 5-field cron expression |
+| `CronList` | List all scheduled tasks with IDs, schedules, and prompts |
+| `CronDelete` | Cancel a task by ID |
+
+A session can hold up to 50 tasks. Recurring tasks expire after 3 days. Disable scheduling entirely with `CLAUDE_CODE_DISABLE_CRON=1`.
+
+For durable scheduling that survives restarts, use the Desktop app's scheduled tasks or GitHub Actions with a `schedule` trigger.
+
 ## MCP (Model Context Protocol)
 
 For comprehensive coverage of MCP -- including architecture, configuration, authentication, popular servers, building custom servers, debugging, and best practices -- see [Chapter 6: MCP](06-mcp.md).
