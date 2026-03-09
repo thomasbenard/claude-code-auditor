@@ -17,6 +17,7 @@ Use this reference when updating the guide to maintain consistency.
 | 9 | `09-effective-prompting.md` | Prompt writing, plan mode, workflows, large tasks |
 | 10 | `10-advanced-features.md` | Hooks, worktrees, remote control, scheduled tasks, IDE, headless mode, CI/CD |
 | 11 | `11-troubleshooting.md` | Context management, token waste, debugging, costs |
+| 12 | `12-references.md` | External blogs, videos, podcasts, courses, community resources |
 
 ## Topic-to-Chapter Map
 
@@ -35,12 +36,13 @@ Use this to find where a topic is primarily covered and where it may be cross-re
 | Remote Control | 10 | 01 (surfaces) |
 | Scheduled Tasks | 10 | 05 (bundled skills: /loop) |
 | Context management | 11 | 02 (context windows), 09 (prompt efficiency) |
+| References / Resources | 12 | 01 (further reading) |
 
 ## Writing Conventions
 
 - **Headings**: `##` for major sections, `###` for subsections
 - **Chapter links**: `[Chapter Name](filename.md)` with relative paths
-- **Navigation**: Each chapter ends with `Next: [Chapter Name](filename.md)` (chapter 11 links to index)
+- **Navigation**: Each chapter ends with `Next: [Chapter Name](filename.md)` (chapter 12 links back to index)
 - **Code blocks**: Use language-specific fencing (```json, ```bash, ```yaml, ```markdown)
 - **Tables**: Used extensively for reference material (tool comparisons, settings, shortcuts)
 - **Tone**: Practical and direct; explain the "what" and "why", avoid filler

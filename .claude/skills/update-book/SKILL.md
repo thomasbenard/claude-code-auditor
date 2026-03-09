@@ -4,7 +4,6 @@ description: Updates the Claude Code reference guide with new, changed, or obsol
 argument-hint: "<topic, feature, or 'full-review'>"
 disable-model-invocation: true
 allowed-tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch, Bash
-model: sonnet
 ---
 
 Update the Claude Code reference guide based on: $ARGUMENTS
@@ -30,6 +29,10 @@ Use WebSearch and WebFetch to check official sources for the latest information:
 1. Search for recent Claude Code documentation, changelogs, and release notes
 2. Fetch the official docs at `https://docs.anthropic.com/en/docs/claude-code` for current behavior
 3. Compare what the book says against what the official sources say
+
+See [reference.md](reference.md) § "Official Sources to Check" for canonical URLs.
+
+If official sources are ambiguous or conflicting, flag the item as uncertain in the change plan and let the user decide.
 
 For each discrepancy, note:
 - **What the book says** (file, section, line)
