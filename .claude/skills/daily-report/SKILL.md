@@ -151,17 +151,18 @@ nav_order: N
 - **Always include URLs** — Every item needs a clickable link so the reader can go deeper.
 - **No speculation** — Only include content you actually found and verified. Don't pad the report with guesses about what might have been published.
 
-## Step 5: Commit and Push
+## Step 5: Commit
 
 After writing the report file:
 
 1. Stage the new report file (and the skill itself if it's new/changed)
 2. Commit with the message format: `Add daily report for YYYY-MM-DD`
-3. Push to the remote with `git push`
+
+Do NOT push. The user will push manually from their local machine.
 
 ## Step 6: Report Back
 
-After committing and pushing, tell the user:
+After committing, tell the user:
 - The path to the generated report
 - How many items were found across categories
 - The 1-2 most notable findings (or note that it was a quiet day)
