@@ -21,8 +21,10 @@ If the user provided a topic focus: $ARGUMENTS
 ## Step 1: Determine Dates
 
 Use the current date from your system context:
-- **Yesterday** — the date to search for (content published on this day)
 - **Today** — used for the output filename (`daily-report/YYYY-MM-DD.md`)
+- **Yesterday** — the date to search for (content published on this day)
+
+**CRITICAL:** Run `date +%Y-%m-%d` via Bash to get today's date. Do NOT rely on filenames of existing reports to infer what day it is. The report filename must always use **today's** date.
 
 If the user specified a topic focus in the arguments, narrow your searches to that topic while still checking all source categories.
 
@@ -83,6 +85,11 @@ If a topic focus was specified, still include all findings but lead with the foc
 ## Step 4: Generate the Report
 
 Create the `daily-report/` directory if it doesn't exist.
+
+**CRITICAL — never modify previous reports:**
+1. The output file MUST be `daily-report/{TODAY}.md` where `{TODAY}` is the date from Step 1.
+2. If a file with today's date already exists, you may overwrite it (it's a re-run of today's report).
+3. **NEVER edit, update, or append to reports from previous days.** Past reports are immutable records. If you find content that was missed in a previous day's report, include it in today's report instead — not by patching the old one.
 
 Write the report to `daily-report/YYYY-MM-DD.md` using this structure:
 
