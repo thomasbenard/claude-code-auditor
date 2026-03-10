@@ -68,6 +68,11 @@ A comprehensive reference for using Claude Code effectively. This guide serves t
 13. **[Changelog](13-changelog.md)**
     A log of updates made to this guide, with dates and summaries of what changed.
 
+### Daily Reports
+
+- **[Daily Reports](daily-report/index.md)**
+  Trending articles, discussions, and resources about Claude Code, compiled daily.
+
 ---
 
 ## How to Use This Guide
