@@ -151,7 +151,17 @@ nav_order: N
 - **Always include URLs** — Every item needs a clickable link so the reader can go deeper.
 - **No speculation** — Only include content you actually found and verified. Don't pad the report with guesses about what might have been published.
 
-## Step 5: Commit
+## Step 5: Clean Up Stale Git Locks
+
+Before committing, check for and remove any stale `.lock` files in `.git/`:
+
+```bash
+find .git -name "*.lock" -type f -exec rm -f {} \;
+```
+
+This workspace runs on a FUSE-mounted filesystem where git lock files from previous sessions can linger even after the git process exits. If `rm` fails with "Operation not permitted", retry after a short wait — the mount may need a moment to release the file. If it still fails, note the issue in the report-back and let the user handle it manually.
+
+## Step 6: Commit
 
 After writing the report file:
 
@@ -160,7 +170,7 @@ After writing the report file:
 
 Do NOT push. The user will push manually from their local machine.
 
-## Step 6: Report Back
+## Step 7: Report Back
 
 After committing, tell the user:
 - The path to the generated report
