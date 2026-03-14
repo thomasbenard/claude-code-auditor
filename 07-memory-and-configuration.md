@@ -438,6 +438,9 @@ Customize keyboard shortcuts via `~/.claude/keybindings.json`:
 | `attribution.commit` | string | Text appended to git commit messages (replaces deprecated `includeCoAuthoredBy`) |
 | `attribution.pr` | string | Text appended to pull request bodies |
 | `includeGitInstructions` | boolean | Include built-in git commit/PR instructions (default `true`). Set to `false` to remove them |
+| `autoMemoryDirectory` | string | Override the directory where auto memory files are stored |
+| `modelOverrides` | object | Map model aliases to custom provider model IDs (e.g., for Bedrock/Vertex) |
+| `language` | string | UI language for Claude Code |
 | `sandbox.enableWeakerNetworkIsolation` | boolean | (macOS) Allow TLS verification for Go programs in sandboxed mode |
 | `cleanupPeriodDays` | number | Delete inactive sessions after N days (default 30) |
 
@@ -454,6 +457,7 @@ In addition to setting environment variables for tools via the `env` key (descri
 | `CLAUDE_CODE_DISABLE_1M_CONTEXT` | Disable the 1M extended context window |
 | `CLAUDE_CODE_DISABLE_CRON` | Disable scheduled tasks and the `/loop` command |
 | `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` | Disable background task functionality |
+| `CLAUDE_CODE_TMPDIR` | Override the temporary directory used by Claude Code |
 | `CLAUDE_BASH_NO_LOGIN` | Skip login shell initialization for Bash commands |
 
 Set these in your shell profile, CI environment, or in the `env` key of your settings file.

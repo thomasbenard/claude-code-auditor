@@ -28,8 +28,12 @@ Hooks are automated shell commands that execute at specific lifecycle events. Th
 | `Stop` | Claude finishes responding | (no matcher) | Post-response actions |
 | `TeammateIdle` | Agent team teammate about to go idle | (no matcher) | Enforce quality gates before teammate stops |
 | `TaskCompleted` | Task being marked completed | (no matcher) | Enforce completion criteria |
+| `Elicitation` | MCP server requests user input | (no matcher) | Intercept or auto-fill MCP elicitation dialogs |
+| `ElicitationResult` | User responds to MCP elicitation | (no matcher) | Log or validate elicitation responses |
 | `PreCompact` | Before context compaction | `manual`, `auto` | Save state before compaction |
+| `PostCompact` | After context compaction completes | (no matcher) | Restore state, re-inject context |
 | `ConfigChange` | Configuration file changes | Config type | React to config updates |
+| `Setup` | Claude Code initialization | `init`, `init-only`, `maintenance` | Environment bootstrap, first-run configuration |
 | `WorktreeCreate` | Worktree being created | (no matcher) | Custom VCS setup (replaces default git) |
 | `WorktreeRemove` | Worktree being removed | (no matcher) | Custom VCS cleanup |
 | `SessionEnd` | Session terminates | `clear`, `logout`, `prompt_input_exit`, `bypass_permissions_disabled`, `other` | Cleanup, logging |
@@ -362,6 +366,22 @@ Work on this feature in an isolated worktree so it doesn't affect main.
    - If no changes were made: worktree is auto-removed on session exit
    - If changes exist: Claude prompts you to keep or remove the worktree
 
+### Sparse Checkout for Large Monorepos
+
+In large monorepos, checking out the entire repository into each worktree is slow and wasteful. The `worktree.sparsePaths` setting uses git sparse-checkout to include only the directories you need:
+
+```json
+{
+  "worktree.sparsePaths": [
+    "packages/api/",
+    "packages/shared/",
+    "config/"
+  ]
+}
+```
+
+Only the listed directories are checked out in the worktree. This dramatically speeds up `--worktree` startup in repositories with thousands of files.
+
 ### When to Use Worktrees
 
 - **Parallel experiments**: Try multiple approaches without conflicting
@@ -504,7 +524,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Claude Code
-        run: npm install -g @anthropic-ai/claude-code
+        run: curl -fsSL https://claude.ai/install.sh | bash
       - name: Review PR
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -557,6 +577,14 @@ Available for IntelliJ, PyCharm, WebStorm, GoLand, RubyMine, and more via the Je
 ### Desktop App
 
 Claude Code Desktop provides a native application interface for macOS and Windows.
+
+### Chrome Extension
+
+The Claude in Chrome extension lets Claude Code debug live web applications directly in your browser. Claude can inspect pages, read console messages, monitor network requests, fill forms, and take screenshots -- useful for frontend debugging and visual verification without leaving the browser.
+
+### Slack Integration
+
+Mention `@Claude` in Slack with a bug report or task description to receive a pull request back. Claude Code reads the Slack message, works on the codebase, and opens a PR -- useful for routing bug reports from non-developers or team chat directly into code changes.
 
 ## Browser Automation
 
@@ -657,6 +685,23 @@ For local development, Claude Code can preview your app:
 2. Claude starts the server with `preview_start`
 3. Takes screenshots and snapshots to verify changes
 4. Inspects DOM elements for styling verification
+
+## Voice Mode
+
+Voice mode lets you speak to Claude Code using push-to-talk instead of typing. Toggle it with `/voice`.
+
+### Supported Languages
+
+Voice mode supports speech-to-text in 20 languages: English, Spanish, French, German, Italian, Portuguese, Japanese, Korean, Chinese, Hindi, Russian, Polish, Turkish, Dutch, Ukrainian, Greek, Czech, Danish, Swedish, and Norwegian.
+
+### Using Voice Mode
+
+- Press and hold the push-to-talk key (rebindable via `voice:pushToTalk` in keybindings) to speak
+- Release to send the transcription as your prompt
+- Voice mode automatically retries transient connection failures during rapid push-to-talk re-presses
+- Accuracy is optimized for developer terminology
+
+Voice mode is useful when you want to describe a complex task faster than typing, dictate code review feedback, or work hands-free.
 
 ## Extended Thinking
 

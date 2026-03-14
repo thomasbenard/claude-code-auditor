@@ -282,6 +282,17 @@ Wildcards work at any level:
 
 Evaluation order is the same as for built-in tools: deny rules are checked first, then allow rules.
 
+## Elicitation
+
+MCP elicitation allows servers to request structured input from the user mid-task. When a server needs additional information (credentials, configuration choices, confirmation), it sends an elicitation request that Claude Code renders as an interactive dialog -- either form fields or a browser URL for OAuth-style flows.
+
+This happens transparently: the server requests input, you respond, and Claude continues. Two hook events are available for automation:
+
+- **`Elicitation`**: Fires when an MCP server requests input. Use to intercept or auto-fill responses.
+- **`ElicitationResult`**: Fires after the user responds. Use to log or validate responses before they reach the server.
+
+Elicitation requires no configuration beyond having MCP servers that support it. See [Chapter 10](10-advanced-features.md) for hook configuration.
+
 ## Resources and Prompts
 
 While tools are the primary MCP capability, servers can also provide resources and prompts.
@@ -331,6 +342,24 @@ claude mcp add --transport http \
       "url": "https://sentry.io/api/mcp/",
       "headers": {
         "Authorization": "Bearer ${SENTRY_AUTH_TOKEN}"
+      }
+    }
+  }
+}
+```
+
+### OAuth Configuration Options
+
+For servers that use non-standard OAuth discovery, you can specify the metadata URL directly in `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "internal-api": {
+      "type": "http",
+      "url": "https://api.internal.com/mcp/",
+      "oauth": {
+        "authServerMetadataUrl": "https://auth.internal.com/.well-known/oauth-authorization-server"
       }
     }
   }

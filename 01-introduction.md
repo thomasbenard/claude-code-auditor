@@ -34,7 +34,7 @@ Claude Code does not directly access your filesystem or run commands. Instead, i
 - **Execution tools**: Bash
 - **Search tools**: WebSearch, WebFetch
 - **Orchestration tools**: Agent (subagents), TodoWrite, AskUserQuestion
-- **Mode tools**: EnterPlanMode, EnterWorktree
+- **Mode tools**: EnterPlanMode, EnterWorktree, ExitWorktree
 
 Each tool has defined parameters and behaviors. When Claude calls a tool, the system executes it and returns the result. Some tools require your permission before executing (like editing files or running shell commands), depending on your permission mode.
 
@@ -95,6 +95,12 @@ claude -p "what does src/auth.ts do?"
 # Resume previous session
 claude --resume
 
+# Name the session at startup
+claude --name "auth refactor"
+
+# Start from a pull request
+claude --from-pr 123
+
 # Start in plan mode
 claude --permission-mode plan
 
@@ -122,6 +128,8 @@ Claude Code is available in multiple surfaces, all sharing the same configuratio
 - **JetBrains IDEs**: Available for IntelliJ, PyCharm, WebStorm, and others via the marketplace.
 - **Desktop App**: A standalone application for macOS and Windows. Visual diff review, multiple sessions side by side, and cloud session handoff.
 - **Web**: Run Claude Code at [claude.ai/code](https://claude.ai/code) with no local setup. Start long-running tasks, work on repos you don't have locally, or run multiple tasks in parallel.
+- **Chrome**: Debug live web applications with the Claude in Chrome extension.
+- **Slack**: Mention `@Claude` in Slack with a bug report and get a pull request back.
 
 ## Key Concepts at a Glance
 

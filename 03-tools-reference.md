@@ -292,6 +292,8 @@ pattern="import.*from ['\"](react|vue)"  type="ts"  # Framework imports
 
 **Purpose**: Launch specialized agents for complex, multi-step work. (This tool was previously called "Task" and was renamed to "Agent" in v2.1.63; the old name still works as an alias.)
 
+Key parameters include `prompt`, `subagent_type`, `description`, `model` (override the model per-agent: `sonnet`, `opus`, `haiku`), `run_in_background`, `resume`, and `isolation` (`"worktree"` for isolated git worktree).
+
 This is covered extensively in [Chapter 4: Subagents](04-subagents.md).
 
 ### EnterPlanMode
@@ -317,6 +319,14 @@ This is covered extensively in [Chapter 4: Subagents](04-subagents.md).
 - Working on features in isolation from the main branch
 - Parallel Claude sessions that shouldn't conflict
 - Experimental changes you might discard
+
+### ExitWorktree
+
+**Purpose**: Leave the current worktree and return to the original repository.
+
+**When to use**:
+- Work in the worktree is complete and changes have been committed
+- Discarding experimental changes and returning to the main branch
 
 ---
 

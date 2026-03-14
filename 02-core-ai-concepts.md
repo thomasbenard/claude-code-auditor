@@ -225,7 +225,15 @@ Use extended thinking for complex debugging, architectural decisions, or multi-s
 
 ### Effort Levels
 
-Opus 4.6 defaults to **medium effort** for Max and Team subscribers, which is the sweet spot between speed and thoroughness for most tasks. To temporarily increase effort for a single turn, include the keyword **`ultrathink`** in your prompt -- this triggers high-effort extended thinking for that turn only, useful for especially complex reasoning or debugging.
+Effort levels control how much reasoning Claude applies before responding. There are three levels:
+
+| Level | Symbol | When to use |
+| --- | --- | --- |
+| **Low** | `○` | Quick lookups, simple edits |
+| **Medium** | `◐` | General development (default for Opus 4.6 on Max/Team) |
+| **High** | `●` | Complex debugging, architecture, multi-step reasoning |
+
+Change the effort level during a session with `/effort` or set it per-turn by including the keyword **`ultrathink`** in your prompt (triggers high effort for that turn only). Use `/effort auto` to reset to the default.
 
 ## System Prompt
 

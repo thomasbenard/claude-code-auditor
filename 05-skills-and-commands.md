@@ -31,6 +31,7 @@ Claude Code ships with built-in commands invoked by typing `/` in the prompt:
 | `/memory` | Edit auto memory files |
 | `/permissions` | View and update permission rules |
 | `/model` | Change the active AI model |
+| `/effort` | Set model effort level (low, medium, high, auto) |
 | `/plan` | Enter plan mode (read-only exploration) |
 
 ### Context and Cost
@@ -62,10 +63,13 @@ Claude Code ships with built-in commands invoked by typing `/` in the prompt:
 | `/status` | Show version, account, and model information |
 | `/stats` | View usage statistics |
 | `/copy` | Copy last response to clipboard. Shows a picker when code blocks are present |
+| `/color` | Customize terminal color scheme |
 | `/diff` | Interactive diff viewer for uncommitted changes and per-turn diffs |
 | `/fast [on\|off]` | Toggle fast mode (same model, faster output) |
 | `/review` | *Deprecated.* Install the `code-review` plugin instead: `claude plugin install code-review@claude-code-marketplace` |
+| `/sandbox` | Manage sandbox configuration |
 | `/tasks` | List and manage background tasks |
+| `/voice` | Toggle voice mode (push-to-talk speech input, 20 languages) |
 | `/add-dir <path>` | Add a working directory to the current session |
 | `/vim` | Toggle vim editing mode |
 
