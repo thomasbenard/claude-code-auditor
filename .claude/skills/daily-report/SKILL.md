@@ -8,7 +8,7 @@ description: >
   "what happened yesterday", or "Claude Code news".
 argument-hint: "<optional: specific topic focus like 'MCP' or 'hooks', or leave blank for general report>"
 disable-model-invocation: true
-allowed-tools: Read, Write, Edit, Glob, WebSearch, WebFetch, Bash
+allowed-tools: Read, Write, Edit, Glob, WebSearch, WebFetch, Bash(git add:*), Bash(git commit:*), Bash(git push), Bash(git status), Bash(date *), Bash(find .git *)
 model: sonnet
 ---
 
@@ -156,24 +156,32 @@ nav_order: N
 Before committing, check for and remove any stale `.lock` files in `.git/`:
 
 ```bash
-find .git -name "*.lock" -type f -exec rm -f {} \;
+find .git -name "*.lock" -type f -delete 2>/dev/null; true
 ```
 
-This workspace runs on a FUSE-mounted filesystem where git lock files from previous sessions can linger even after the git process exits. If `rm` fails with "Operation not permitted", retry after a short wait — the mount may need a moment to release the file. If it still fails, note the issue in the report-back and let the user handle it manually.
+Git lock files from previous runs can linger and block commits. The `; true` ensures the step never fails — if there are no lock files or deletion fails, execution continues regardless. If a lock file resists deletion, wait 3 seconds and retry once:
 
-## Step 6: Commit
+```bash
+sleep 3 && find .git -name "*.lock" -type f -delete 2>/dev/null; true
+```
+
+## Step 6: Commit and Push
+
+This skill runs autonomously via Windows Task Scheduler (`claude -p`), so every step must complete without user interaction.
 
 After writing the report file:
 
-1. Stage the new report file (and the skill itself if it's new/changed)
+1. Stage the new report file: `git add daily-report/YYYY-MM-DD.md`
 2. Commit with the message format: `Add daily report for YYYY-MM-DD`
+3. Push to the remote: `git push`
 
-Do NOT push. The user will push manually from their local machine.
+If `git push` fails (e.g., network issue, auth error), do NOT retry in a loop. Note the failure in Step 7 output so it shows up in the Task Scheduler logs.
 
 ## Step 7: Report Back
 
-After committing, tell the user:
+Print a summary to stdout (this becomes the Task Scheduler log output):
 - The path to the generated report
 - How many items were found across categories
 - The 1-2 most notable findings (or note that it was a quiet day)
 - The commit hash
+- Whether the push succeeded or failed
