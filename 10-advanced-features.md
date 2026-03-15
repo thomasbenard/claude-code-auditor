@@ -1,3 +1,9 @@
+---
+title: "10. Advanced Features"
+nav_order: 10
+has_children: true
+---
+
 # Advanced Features
 
 This chapter is split into four parts:

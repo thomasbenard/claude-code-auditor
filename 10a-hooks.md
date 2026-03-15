@@ -1,3 +1,9 @@
+---
+title: "10a. Hooks"
+parent: "10. Advanced Features"
+nav_order: 1
+---
+
 # Advanced Features: Hooks
 
 Hooks are automated shell commands that execute at specific lifecycle events. They let you enforce standards, automate formatting, integrate with external tools, and customize Claude Code's behavior.

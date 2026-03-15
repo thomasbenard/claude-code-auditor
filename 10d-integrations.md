@@ -1,3 +1,9 @@
+---
+title: "10d. Integrations"
+parent: "10. Advanced Features"
+nav_order: 4
+---
+
 # Advanced Features: Integrations
 
 ## IDE Integrations

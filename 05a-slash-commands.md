@@ -1,3 +1,9 @@
+---
+title: "5a. Slash Commands"
+parent: "5. Skills and Commands"
+nav_order: 1
+---
+
 # Skills and Commands: Slash Commands
 
 Claude Code ships with built-in commands invoked by typing `/` in the prompt:

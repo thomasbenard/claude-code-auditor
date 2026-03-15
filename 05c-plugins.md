@@ -1,3 +1,9 @@
+---
+title: "5c. Plugins"
+parent: "5. Skills and Commands"
+nav_order: 3
+---
+
 # Skills and Commands: Plugins
 
 ## Plugins

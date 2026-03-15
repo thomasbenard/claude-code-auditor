@@ -1,3 +1,9 @@
+---
+title: "10c. Automation and Headless Mode"
+parent: "10. Advanced Features"
+nav_order: 3
+---
+
 # Advanced Features: Automation and Headless Mode
 
 ## Remote Control

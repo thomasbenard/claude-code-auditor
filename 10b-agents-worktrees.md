@@ -1,3 +1,9 @@
+---
+title: "10b. Agents and Worktrees"
+parent: "10. Advanced Features"
+nav_order: 2
+---
+
 # Advanced Features: Agents and Worktrees
 
 ## Custom Agents

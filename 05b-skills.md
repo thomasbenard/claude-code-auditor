@@ -1,3 +1,9 @@
+---
+title: "5b. Skills"
+parent: "5. Skills and Commands"
+nav_order: 2
+---
+
 # Skills and Commands: Skills
 
 ## What Are Skills?

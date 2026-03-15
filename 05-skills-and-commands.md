@@ -1,3 +1,9 @@
+---
+title: "5. Skills and Commands"
+nav_order: 5
+has_children: true
+---
+
 # Skills and Commands
 
 This chapter is split into three parts:
