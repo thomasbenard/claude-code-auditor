@@ -4,7 +4,7 @@ description: Stages and commits changes with an auto-generated commit message
 argument-hint: "<optional message or guidance>"
 disable-model-invocation: true
 allowed-tools: Bash, Read, Glob, Grep
-model: sonnet
+model: haiku
 ---
 
 Create a git commit for the current changes.
