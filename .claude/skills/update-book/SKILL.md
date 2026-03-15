@@ -60,6 +60,22 @@ For each discrepancy, note:
 - **What the current behavior is** (with source)
 - **Type**: `outdated` (was true, no longer), `missing` (new feature not covered), `inaccurate` (was never quite right)
 
+## Step 2b: Scan for Stale Content
+
+After researching current state, scan the book for claims that may have gone stale. Run targeted Greps across all chapter files:
+
+```
+Grep pattern="(v[0-9]+\.[0-9]|202[0-9]-|deprecated|removed|no longer|not yet|coming soon|currently not)" output_mode="content" -n=true
+```
+
+Also grep for specific names that change often:
+- Model names and IDs (e.g., `claude-3`, `claude-sonnet-4`)
+- Version numbers and release references
+- Feature flags and experimental features (`CLAUDE_CODE_EXPERIMENTAL`)
+- CLI flag names and syntax
+
+For each match, cross-check against your Step 2 research findings. Only read the surrounding section (via offset/limit) if the match looks outdated. Flag confirmed stale content as `[outdated]` in the change plan.
+
 ## Step 3: Plan Changes
 
 Before editing, present a summary of all planned changes grouped by chapter:
