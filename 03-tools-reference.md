@@ -256,23 +256,24 @@ pattern="import.*from ['\"](react|vue)"  type="ts"  # Framework imports
 
 ## Orchestration Tools
 
-### TodoWrite
+### Task Tools (TaskCreate, TaskGet, TaskUpdate, TaskList, TaskOutput, TaskStop)
 
-**Purpose**: Create and manage a structured task list for the current session.
+**Purpose**: Create and manage structured tasks for tracking progress and background work in the current session.
 
-**Parameters**:
-- `todos` (required): Array of todo items, each with `content`, `status`, and `activeForm`
-
-**Task states**:
-- `pending`: Not yet started
-- `in_progress`: Currently working on (limit to ONE at a time)
-- `completed`: Task finished
+| Tool | Purpose | Key parameters |
+| --- | --- | --- |
+| **TaskCreate** | Create a new task | `description`, `prompt` |
+| **TaskGet** | Get details of a specific task | `id` |
+| **TaskUpdate** | Update a task's status | `id`, `status` (`pending`, `in_progress`, `completed`) |
+| **TaskList** | List all tasks in the session | (none) |
+| **TaskOutput** | Read output from a background task | `id` |
+| **TaskStop** | Stop a running background task | `id` |
 
 **Best practices**:
-- Use for tasks with 3+ steps
+- Use for tasks with 3+ steps to track progress visually
 - Mark tasks complete immediately after finishing (don't batch)
 - Keep exactly one task as `in_progress` at any time
-- Provide both forms: `content` ("Run tests") and `activeForm` ("Running tests")
+- Use `TaskOutput` to check results from background subagents
 - Don't use for single, trivial tasks
 
 ### AskUserQuestion
@@ -311,6 +312,14 @@ This is covered extensively in [Chapter 4: Subagents](04-subagents.md).
 - Tasks with specific, detailed instructions
 - Pure research (use Explore subagent instead)
 
+### ExitPlanMode
+
+**Purpose**: Leave plan mode and return to normal mode where edits and commands are allowed.
+
+**When to use**:
+- After plan exploration is complete and you're ready to implement
+- When switching from read-only investigation back to active development
+
 ### EnterWorktree
 
 **Purpose**: Create an isolated git worktree for parallel development.
@@ -342,6 +351,30 @@ This is covered extensively in [Chapter 4: Subagents](04-subagents.md).
 - `cell_id` (optional): ID of the cell to edit
 - `cell_type` (optional): `code` or `markdown`
 - `edit_mode` (optional): `replace` (default), `insert`, or `delete`
+
+---
+
+## Deferred Tool Loading
+
+### ToolSearch
+
+**Purpose**: Fetch full schema definitions for deferred tools so they can be called.
+
+Some tools are "deferred" -- Claude Code knows their names but doesn't load their full schemas until needed. This keeps the system prompt lean. `ToolSearch` retrieves the complete schema on demand.
+
+**Parameters**:
+- `query` (required): Search query. Use `"select:ToolName"` for exact matches or keywords for fuzzy search
+- `max_results` (optional, default 5): Maximum number of tools to return
+
+**Key behaviors**:
+- Returns full JSONSchema definitions that make the tool callable
+- Supports exact selection (`"select:Read,Edit,Grep"`), keyword search (`"notebook jupyter"`), and name-filtered search (`"+slack send"`)
+- Only needed for tools that appear in `<available-deferred-tools>` messages
+
+**Best practices**:
+- Use `select:` prefix when you know the exact tool name
+- Fetch multiple tools at once with comma-separated names: `"select:CronCreate,CronList,CronDelete"`
+- Not needed for tools already loaded in the session (Read, Write, Edit, Glob, Grep, Bash, Agent, Skill)
 
 ---
 

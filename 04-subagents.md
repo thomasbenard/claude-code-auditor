@@ -26,9 +26,9 @@ Think of subagents as delegating work to a specialist. You give them a clear bri
 | --- | --- | --- | --- |
 | **Explore** | Read-only (Glob, Grep, Read) | Haiku | Fast codebase exploration and search |
 | **Plan** | Read-only (all except Edit, Write, Agent) | Inherited | Research and planning before implementation |
-| **Bash** | Bash only | Inherited | Running commands in a separate context |
 | **general-purpose** | All tools | Inherited | Complex multi-step tasks |
 | **claude-code-guide** | Glob, Grep, Read, WebFetch, WebSearch | Haiku | Answering questions about Claude Code itself |
+| **statusline-setup** | Read, Edit | Inherited | Configuring the Claude Code status line |
 
 ### Explore Agent
 
@@ -62,15 +62,6 @@ A research-focused agent with read-only access. Inherits the parent's model for 
 - Planning a complex refactor before executing
 - Understanding unfamiliar code architecture
 - Evaluating multiple implementation approaches
-
-### Bash Agent
-
-Runs commands in isolation. Useful when command output would be verbose.
-
-**When to use**:
-- Running test suites with large output
-- Build processes
-- System commands that produce lots of output
 
 ### General-Purpose Agent
 

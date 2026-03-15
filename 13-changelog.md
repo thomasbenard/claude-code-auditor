@@ -9,6 +9,12 @@ This chapter tracks updates to the guide. Each entry summarizes what changed and
 
 ---
 
+## 2026-03-14 (2)
+
+- **01-introduction.md**: Replaced `TodoWrite` with `TaskCreate/TaskUpdate/TaskList` in tool architecture list; added `ExitPlanMode` to mode tools
+- **03-tools-reference.md**: Replaced obsolete `TodoWrite` section with new Task tools (TaskCreate, TaskGet, TaskUpdate, TaskList, TaskOutput, TaskStop); added `ExitPlanMode` tool section; added `ToolSearch` tool section for deferred tool loading
+- **04-subagents.md**: Removed obsolete `Bash` agent type; added `statusline-setup` agent type
+
 ## 2026-03-14
 
 - **01-introduction.md**: Added `--name` and `--from-pr` CLI flags, Chrome extension, Slack integration, and `ExitWorktree` to tool list

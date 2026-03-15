@@ -28,7 +28,7 @@ A comprehensive reference for using Claude Code effectively. This guide serves t
 ### Working with Tools
 
 3. **[Tools Reference](03-tools-reference.md)**
-   Complete reference for every built-in tool: Read, Write, Edit, Glob, Grep, Bash, WebFetch, WebSearch, TodoWrite, AskUserQuestion, and more. When to use each and best practices.
+   Complete reference for every built-in tool: Read, Write, Edit, Glob, Grep, Bash, WebFetch, WebSearch, Task tools, AskUserQuestion, and more. When to use each and best practices.
 
 4. **[Subagents and Task Delegation](04-subagents.md)**
    The Agent tool (formerly Task), available agent types (Explore, Plan, Bash, general-purpose), creating custom agents, parallelization strategies, agent teams for multi-session collaboration, and when to delegate vs. work inline.
