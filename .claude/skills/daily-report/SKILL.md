@@ -61,15 +61,13 @@ If a topic focus was specified (e.g., "MCP", "hooks", "skills"), add the topic t
 
 ### Known high-value sources
 
-After the broad searches, specifically check these sources for new content. Use WebFetch on any that look promising from search results:
+After the broad searches, read `12-references.md` to get the current list of known sources (blogs, YouTube channels, podcasts, communities). Extract names and URLs from each section, then specifically check those sources for new content. Use WebFetch on any that look promising from search results.
+
+Also check these general sources not tracked in the references chapter:
 
 | Category | Sources |
 |----------|---------|
-| Official | Anthropic Blog, Claude Code GitHub releases, @AnthropicAI / @ClaudeCode on X |
-| Blogs | ClaudeLog, Builder.io, blog.sshh.io (Shrivu Shankar), boristane.com, creatoreconomy.so |
-| YouTube | IndyDevDan, AICodeKing, Chris Raroque, Nataly Merezhuk, Nick Saraev, Peter Yang |
-| Reddit | r/ClaudeCode, r/ClaudeAI |
-| Other | Hacker News, Dev.to, Medium, The Verge, TechCrunch |
+| News | Hacker News, Dev.to, Medium, The Verge, TechCrunch |
 
 ## Step 3: Curate Findings
 
