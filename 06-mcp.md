@@ -301,7 +301,7 @@ This happens transparently: the server requests input, you respond, and Claude c
 - **`Elicitation`**: Fires when an MCP server requests input. Use to intercept or auto-fill responses.
 - **`ElicitationResult`**: Fires after the user responds. Use to log or validate responses before they reach the server.
 
-Elicitation requires no configuration beyond having MCP servers that support it. See [Chapter 10](10-advanced-features.md) for hook configuration.
+Elicitation requires no configuration beyond having MCP servers that support it. See [Chapter 10](10a-hooks.md) for hook configuration.
 
 ## Resources and Prompts
 
@@ -392,7 +392,7 @@ Here are commonly used MCP servers and their typical setup:
 | **PostgreSQL** | Stdio | Database queries | `claude mcp add postgres -- npx -y @modelcontextprotocol/server-postgres` |
 | **Filesystem** | Stdio | Read/write files outside the project | `claude mcp add filesystem -- npx -y @modelcontextprotocol/server-filesystem /path` |
 | **Sentry** | HTTP | Error tracking, issue monitoring | `claude mcp add --transport http sentry https://sentry.io/api/mcp/` |
-| **Puppeteer** | Stdio | Browser automation, screenshots (consider [Playwright CLI](10-advanced-features.md) instead) | `claude mcp add puppeteer -- npx -y @modelcontextprotocol/server-puppeteer` |
+| **Puppeteer** | Stdio | Browser automation, screenshots (consider [Playwright CLI](10d-integrations.md) instead) | `claude mcp add puppeteer -- npx -y @modelcontextprotocol/server-puppeteer` |
 | **Memory** | Stdio | Persistent key-value knowledge base | `claude mcp add memory -- npx -y @modelcontextprotocol/server-memory` |
 | **Slack** | HTTP | Channel messages, user lookup | `claude mcp add --transport http slack <slack-mcp-url>` |
 
@@ -553,7 +553,7 @@ Some MCP servers expose 30+ tools. This bloats the system prompt and can confuse
 
 **Using MCP when a built-in tool suffices**: Claude Code's built-in file tools (Read, Edit, Grep, Glob) are faster and cheaper than an MCP filesystem server. Only use MCP filesystem for accessing directories outside the project.
 
-**Using MCP for browser automation when Playwright CLI works better**: MCP browser servers (Puppeteer, Playwright MCP) load ~3,600 tokens of tool schemas at session start and stream full accessibility trees and screenshots directly into context. [Playwright CLI](https://github.com/microsoft/playwright-cli) (`@playwright/cli`) saves data to disk and lets Claude read selectively, cutting token use by 4-10x. Prefer Playwright CLI for frontend testing and visual verification -- see [Chapter 10](10-advanced-features.md) for details. Reserve MCP browser servers for sandboxed environments without shell access.
+**Using MCP for browser automation when Playwright CLI works better**: MCP browser servers (Puppeteer, Playwright MCP) load ~3,600 tokens of tool schemas at session start and stream full accessibility trees and screenshots directly into context. [Playwright CLI](https://github.com/microsoft/playwright-cli) (`@playwright/cli`) saves data to disk and lets Claude read selectively, cutting token use by 4-10x. Prefer Playwright CLI for frontend testing and visual verification -- see [Chapter 10](10d-integrations.md) for details. Reserve MCP browser servers for sandboxed environments without shell access.
 
 **Installing MCP servers globally when they're project-specific**: A database MCP server makes sense for a project with PostgreSQL, but not for all your projects. Use project-scoped `.mcp.json` instead of user-scoped config.
 

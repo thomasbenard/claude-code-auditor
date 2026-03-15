@@ -403,7 +403,7 @@ To switch models mid-session, use the `/model` slash command or press `Alt+P`. T
 
 Hooks let you run custom commands automatically at specific points in Claude Code's workflow -- for example, formatting files after every edit or running linters after code changes. Hooks are configured in settings files under the `hooks` key.
 
-For full documentation on hook types, matchers, and examples, see [Chapter 10: Advanced Features](10-advanced-features.md).
+For full documentation on hook types, matchers, and examples, see [Chapter 10: Hooks](10a-hooks.md).
 
 ## Permission Modes
 

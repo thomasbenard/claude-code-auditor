@@ -10,12 +10,19 @@ Use this reference when updating the guide to maintain consistency.
 | 2 | `02-core-ai-concepts.md` | Tokens, context windows, hallucinations, temperature |
 | 3 | `03-tools-reference.md` | All built-in tools, when to use each |
 | 4 | `04-subagents.md` | Agent tool (formerly Task), agent types, custom agents, parallelization |
-| 5 | `05-skills-and-commands.md` | Skills, slash commands, SKILL.md format, patterns |
+| 5 | `05-skills-and-commands.md` | Index linking sub-files below |
+| 5a | `05a-slash-commands.md` | Slash commands, bash mode, bundled skills |
+| 5b | `05b-skills.md` | Skills: creating, invoking, debugging, best practices |
+| 5c | `05c-plugins.md` | Plugins, Agent Skills Open Standard |
 | 6 | `06-mcp.md` | MCP servers, configuration, auth, building servers |
 | 7 | `07-memory-and-configuration.md` | CLAUDE.md, auto memory, settings, env vars, permissions |
 | 8 | `08-project-setup.md` | Project setup, modular rules, hooks, team conventions |
 | 9 | `09-effective-prompting.md` | Prompt writing, plan mode, workflows, large tasks |
-| 10 | `10-advanced-features.md` | Hooks, worktrees, remote control, scheduled tasks, IDE, headless mode, CI/CD |
+| 10 | `10-advanced-features.md` | Index linking sub-files below |
+| 10a | `10a-hooks.md` | Hooks: configuration, events, matchers, examples |
+| 10b | `10b-agents-worktrees.md` | Custom agents, agent teams, worktrees |
+| 10c | `10c-automation.md` | Remote control, scheduled tasks, headless mode, SDK |
+| 10d | `10d-integrations.md` | IDE, browser automation, voice mode, extended thinking |
 | 11 | `11-troubleshooting.md` | Context management, token waste, debugging, costs |
 
 ## Topic-to-Chapter Map
@@ -26,14 +33,19 @@ Use this to find where a topic is primarily covered and where it may be cross-re
 |---|---|---|
 | Tools | 03 | 04 (subagent tools), 11 (tool optimization) |
 | Subagents / Agent tool | 04 | 03 (Agent tool entry), 11 (delegation for context) |
-| Skills | 05 | 07 (settings), 08 (project setup) |
+| Skills | 05b | 07 (settings), 08 (project setup) |
+| Slash commands | 05a | 09 (prompting) |
+| Plugins | 05c | — |
 | MCP | 06 | 03 (MCP tools), 07 (settings) |
 | CLAUDE.md | 07 | 08 (authoring guide), 09 (prompting) |
-| Settings | 07 | 08 (project setup), 10 (hooks config) |
-| Hooks | 10 | 08 (project setup), 07 (settings) |
-| Worktrees | 10 | 04 (agent isolation) |
-| Remote Control | 10 | 01 (surfaces) |
-| Scheduled Tasks | 10 | 05 (bundled skills: /loop) |
+| Settings | 07 | 08 (project setup), 10a (hooks config) |
+| Hooks | 10a | 08 (project setup), 07 (settings) |
+| Worktrees | 10b | 04 (agent isolation) |
+| Custom agents | 10b | 04 (subagents) |
+| Remote Control | 10c | 01 (surfaces) |
+| Scheduled Tasks | 10c | 05a (bundled skills: /loop) |
+| IDE integrations | 10d | — |
+| Browser automation | 10d | 06 (MCP Puppeteer) |
 | Context management | 11 | 02 (context windows), 09 (prompt efficiency) |
 
 ## Writing Conventions

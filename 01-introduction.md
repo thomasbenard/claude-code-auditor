@@ -178,10 +178,10 @@ Claude Code is available in multiple surfaces, all sharing the same configuratio
 | **Context window** | The total text Claude can "see" at once (200k--1M tokens) | [Chapter 2](02-core-ai-concepts.md) |
 | **Tools** | Functions Claude calls to interact with your system | [Chapter 3](03-tools-reference.md) |
 | **Subagents** | Isolated Claude instances for delegated tasks | [Chapter 4](04-subagents.md) |
-| **Skills** | Reusable instructions and commands | [Chapter 5](05-skills-and-commands.md) |
+| **Skills** | Reusable instructions and commands | [Chapter 5](05b-skills.md) |
 | **MCP** | Protocol for connecting to external services | [Chapter 6](06-mcp.md) |
 | **CLAUDE.md** | Project-level instructions file | [Chapter 8](08-project-setup.md) |
-| **Hooks** | Automated shell commands on lifecycle events | [Chapter 10](10-advanced-features.md) |
+| **Hooks** | Automated shell commands on lifecycle events | [Chapter 10](10a-hooks.md) |
 
 ## What Claude Code is Good At
 

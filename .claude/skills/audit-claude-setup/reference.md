@@ -67,7 +67,7 @@ Recommend these based on the project's tech stack:
 - **review**: Code review checking correctness, security, performance, and style
 - **test-for**: Generate tests for a specific file following existing test patterns
 
-See [Chapter 5](05-skills-and-commands.md) for the full skill format and examples.
+See [Chapter 5](05b-skills.md) for the full skill format and examples.
 
 ## Permission Patterns
 
@@ -120,7 +120,7 @@ See [Chapter 8 - Configuring Permissions](08-project-setup.md) for more patterns
 }
 ```
 
-See [Chapter 10 - Hooks](10-advanced-features.md) for the full event reference and more examples.
+See [Chapter 10 - Hooks](10a-hooks.md) for the full event reference and more examples.
 
 ## Dev Server Configuration
 

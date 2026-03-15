@@ -20,10 +20,13 @@ This chapter tracks updates to the guide. Each entry summarizes what changed and
 - **01-introduction.md**: Added `--name` and `--from-pr` CLI flags, Chrome extension, Slack integration, and `ExitWorktree` to tool list
 - **02-core-ai-concepts.md**: Updated effort levels section — removed "max" level, documented low/medium/high with symbols and `/effort` command
 - **03-tools-reference.md**: Added `ExitWorktree` tool section and `model` parameter documentation on Agent tool
-- **05-skills-and-commands.md**: Added `/effort`, `/color`, `/voice`, and `/sandbox` slash commands
+- **05a-slash-commands.md** (formerly in 05-skills-and-commands.md): Added `/effort`, `/color`, `/voice`, and `/sandbox` slash commands
 - **06-mcp.md**: Added MCP elicitation section and `oauth.authServerMetadataUrl` config option
 - **07-memory-and-configuration.md**: Added `autoMemoryDirectory`, `modelOverrides`, `language` settings and `CLAUDE_CODE_TMPDIR` env var
-- **10-advanced-features.md**: Added `PostCompact`, `Elicitation`, `ElicitationResult`, and `Setup` hook events; added `worktree.sparsePaths` for monorepos; added Voice Mode section; added Chrome and Slack integration sections; updated CI/CD install to use native installer
+- **10a-hooks.md** (formerly in 10-advanced-features.md): Added `PostCompact`, `Elicitation`, `ElicitationResult`, and `Setup` hook events
+- **10b-agents-worktrees.md** (formerly in 10-advanced-features.md): Added `worktree.sparsePaths` for monorepos
+- **10c-automation.md** (formerly in 10-advanced-features.md): Updated CI/CD install to use native installer
+- **10d-integrations.md** (formerly in 10-advanced-features.md): Added Voice Mode section; added Chrome and Slack integration sections
 
 ---
 
