@@ -20,7 +20,28 @@ Determine what needs updating based on the argument:
 - **Specific feature** (e.g., "launch.json", "worktrees"): Find all mentions across chapters
 - **`full-review`**: Scan every chapter for outdated content (this is thorough but slow)
 
-Read `index.md` to identify which chapters are relevant. Then read those chapters fully.
+### Token-efficient reading strategy
+
+**Do NOT read entire chapter files.** The guide is ~200KB / ~5000 lines. Reading it all wastes tens of thousands of tokens. Instead, use targeted reads:
+
+1. **Identify candidate chapters** — Consult [reference.md](reference.md) § "Topic-to-Chapter Map" to find primary and cross-referenced chapters for the topic. For `full-review`, all chapters are candidates.
+
+2. **Extract section map** — For each candidate chapter, Grep for heading patterns to get a table of contents with line numbers:
+   ```
+   Grep pattern="^##" path="<chapter>.md" output_mode="content"
+   ```
+
+3. **Find relevant sections** — Grep for topic keywords across candidate chapters to find which sections mention the topic:
+   ```
+   Grep pattern="<keyword>" path="<chapter>.md" output_mode="content" -n=true -C=2
+   ```
+
+4. **Read only those sections** — Use the heading line numbers from step 2 to determine section boundaries, then read just the relevant ranges:
+   ```
+   Read file_path="<chapter>.md" offset=<section_start> limit=<section_length>
+   ```
+
+5. **For `full-review`** — Work chapter by chapter. For each chapter, read only the section map (headings), then compare headings against your research findings from Step 2. Only read sections that look potentially outdated or that cover features known to have changed.
 
 ## Step 2: Research Current State
 
@@ -64,6 +85,16 @@ For each planned change:
 2. **Remove obsolete content** -- Delete cleanly, updating any surrounding transitions
 3. **Add new content** -- Place in the most logical location within the chapter, matching the existing heading hierarchy and depth of coverage
 4. **Update cross-references** -- If a section is renamed, moved, or removed, update all links across all chapters and `index.md`
+
+### Keep content concise
+
+When editing, actively look for opportunities to **reduce** token count:
+
+- Prefer tables and code examples over prose — they convey more per token
+- Remove filler phrases, redundant explanations, and obvious statements
+- Don't expand a one-line mention into a paragraph unless the topic truly warrants it
+- If adding new content, check whether existing content on the same topic can be trimmed or consolidated
+- A net-zero or net-negative line count change is ideal
 
 ## Step 5: Log Changes
 
