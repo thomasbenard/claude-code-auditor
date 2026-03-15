@@ -169,6 +169,86 @@ Add a "Compact Instructions" section to CLAUDE.md for critical context that must
 3. Use plan mode to review changes before implementation
 4. Add build/test commands to CLAUDE.md so Claude knows how to verify
 
+### Rate Limiting and API Quotas
+
+**Symptoms**: `API Error: Rate limit reached`, requests hanging, or 429 responses.
+
+**Causes**:
+- Too many requests in a short window (per-model rate limits)
+- Plan-level usage caps reached (check your Anthropic/API plan)
+- Heavy subagent usage multiplying request volume
+
+**Solutions**:
+1. Wait a few minutes — rate limits reset on a rolling window
+2. Switch to a lighter model (`/model` → Haiku) to use a different rate pool
+3. Use `model: haiku` in skill definitions for lightweight tasks (see [Chapter 5](05-skills.md))
+4. Check your plan limits at console.anthropic.com
+5. Reduce parallel subagent launches if hitting limits frequently
+
+### MCP Connection Failures
+
+**Server won't start:**
+- Verify the command and path in your MCP config (`claude mcp list`)
+- Check that the server binary/script exists and is executable
+- For `npx`-based servers, ensure the package is installable
+
+**Tools not appearing:**
+- Run `claude mcp list` to confirm the server is registered
+- Check that the server started without errors (`/mcp` in-session)
+- Restart the server: `claude mcp reset`
+
+**Timeout errors:**
+- The server is taking too long to initialize (default timeout applies)
+- Move heavy initialization out of the server startup path
+- Check for network dependencies that may be slow or unreachable
+
+**General fix:** `claude mcp reset` restarts all MCP servers and often resolves transient issues.
+
+### Git-Related Failures
+
+**Merge conflicts from Claude's edits:**
+- Claude cannot resolve conflicts in `<<<<<<<` / `>>>>>>>` markers reliably on its own
+- Resolve manually, then ask Claude to continue from the resolved state
+- Alternatively, ask Claude to resolve — but review the result carefully
+
+**Authentication errors:**
+- Check that git credentials are configured (`git config credential.helper`)
+- SSH key issues: verify with `ssh -T git@github.com`
+- Claude inherits your shell's git config — fix it there, not in Claude
+
+**Claude committing unwanted files:**
+- Add patterns to `.gitignore` before asking Claude to commit
+- Always review staged files before confirming a commit
+- Add deny rules: `"deny": ["Bash(git add -A)", "Bash(git add .)"]`
+
+### Debugging Hooks
+
+If a hook isn't working:
+1. **Test manually** — run the hook command directly in your terminal to see its output
+2. **Check verbose mode** (`Ctrl+O`) — hook execution details appear in verbose output
+3. **Common causes**: wrong path to executable, missing dependencies, incorrect `match_files` pattern
+4. See [Chapter 4](04-tools.md) for hook configuration details
+
+### Subagent Failures
+
+Subagents (Task tool) can fail silently or get stuck:
+- **Timeout**: long-running agents may hit context or time limits — break the task into smaller pieces
+- **Wrong results**: the subagent lacks your conversation context — include all necessary details in the prompt
+- **Resuming**: use `resume` to continue a headless session from where it left off, or restart with a more specific prompt
+- **Debugging**: check the subagent's output for error messages; it appears in the tool result
+
+### Common Error Messages
+
+| Error | Likely Cause | Fix |
+| --- | --- | --- |
+| `Edit failed: old_string not found` | String not unique in file, or whitespace/indentation mismatch | Re-read the file; include more surrounding context in `old_string` |
+| `API Error: Rate limit reached` | Too many requests or plan quota hit | Wait a few minutes, or switch to a lighter model |
+| `Permission denied` | Permission mode or deny rules blocking the action | Check `/permissions`; add to allow list if appropriate |
+| `Command timed out` | Bash command exceeded the 2-minute default | Use the `timeout` parameter for long commands |
+| `File not found` | Wrong path or relative path that doesn't resolve | Use absolute paths; verify with Glob or `ls` |
+| `MCP server failed to start` | Bad command, missing binary, or config error | Run `claude mcp list`; check paths; `claude mcp reset` |
+| `Context window full` | Too much content loaded into the conversation | Run `/compact`; start a new session if needed |
+
 ## Performance Optimization
 
 ### Token Efficiency

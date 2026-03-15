@@ -129,6 +129,21 @@ Context utilization is the art of making the most of your limited context window
 | Conversation history | Grows continuously | Use `/compact` |
 | Auto memory (MEMORY.md) | Up to ~2k tokens (200 lines) | Keep focused |
 
+### Attention and Recency Bias
+
+Language models weight recent context more heavily than earlier context. Instructions or details near the end of the conversation have more influence on the next response than those from many turns ago. This is why prompt ordering matters: put your most important constraints last. It also explains why `/compact` can improve quality mid-session -- by summarizing stale history into a fresh, focused prompt, it moves key context back into the high-attention zone.
+
+## Prompt Caching
+
+When the same prefix of tokens appears in repeated API calls, the provider can reuse a cached version instead of reprocessing it from scratch. This is **prompt caching**, and it has two practical effects:
+
+1. **Lower cost** -- cached input tokens are significantly cheaper (typically 90% less)
+2. **Lower latency** -- the cached prefix is processed faster
+
+In Claude Code, caching happens automatically. The system prompt, your CLAUDE.md files, and tool definitions form a stable prefix that stays the same across turns, so they get cached after the first turn. This is why a well-organized CLAUDE.md is essentially free after the first request in a conversation -- you pay full price once, then cache prices for the rest of the session.
+
+You don't need to do anything to enable prompt caching. Just know that the beginning of the prompt is what gets cached, so stable content (system prompt, CLAUDE.md) belongs at the top and volatile content (conversation turns) belongs at the bottom -- which is exactly how Claude Code already structures things.
+
 ## Hallucinations
 
 ### What Are Hallucinations?
@@ -177,6 +192,16 @@ Claude Code has structural advantages over plain chat:
 3. **Run verification commands**: After writing code, run tests or type checks
 4. **Use WebSearch for unfamiliar libraries**: Look up current API documentation
 5. **State uncertainty**: When unsure about an API, say so rather than guessing
+
+## Knowledge Cutoff
+
+Claude's training data has a cutoff date. After that date, the model has no built-in awareness of new library releases, API changes, framework updates, or world events. In practice this means:
+
+- Claude may suggest deprecated APIs or miss newly added features
+- Version-specific syntax (e.g., a React hook added in v19) may be unknown
+- Recently created packages or tools won't exist in the model's memory
+
+Claude Code mitigates this structurally. By reading your actual project files (`package.json`, lock files, source code), Claude grounds itself in what your project actually uses rather than relying on training data. When that isn't enough, `WebSearch` and `WebFetch` can pull current documentation. The best practice is to tell Claude to check docs when working with rapidly evolving libraries.
 
 ## Temperature and Determinism
 
@@ -234,6 +259,19 @@ Effort levels control how much reasoning Claude applies before responding. There
 | **High** | `●` | Complex debugging, architecture, multi-step reasoning |
 
 Change the effort level during a session with `/effort` or set it per-turn by including the keyword **`ultrathink`** in your prompt (triggers high effort for that turn only). Use `/effort auto` to reset to the default.
+
+## Tool Use
+
+Claude doesn't just generate text -- it can take actions. When Claude decides it needs to read a file, run a command, or search the codebase, it follows a structured loop:
+
+1. **Decide**: Based on the current prompt, Claude determines that a tool would help (e.g., "I need to read the file before editing it")
+2. **Call**: Claude emits a structured tool request specifying the tool name and parameters (e.g., `Read` with `file_path: "src/auth.ts"`)
+3. **Execute**: Claude Code executes the tool and returns the result to Claude as a new message
+4. **Continue**: Claude incorporates the result into its reasoning and either responds or makes another tool call
+
+This loop can repeat multiple times in a single turn -- Claude might search for a file, read it, edit it, then run tests, all before giving you a final response. Each tool call and its result consume context tokens, which is why efficient tool use matters (see [Chapter 3](03-tools-reference.md) for the full tool reference).
+
+The key insight: Claude doesn't have a hidden ability to see your filesystem or run commands. Every action goes through an explicit tool call that you can see and approve. This is why Claude Code asks for permission before running commands or writing files.
 
 ## System Prompt
 

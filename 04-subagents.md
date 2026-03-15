@@ -225,6 +225,57 @@ Provide specific, actionable feedback referencing exact file locations.
 | `background` | Run in background by default | false |
 | `isolation` | Run in isolated worktree | None |
 
+### Config Options Detail
+
+**`permissionMode`**: Controls how the agent handles tool approvals. Set to `"plan"` to require plan approval before edits, `"bypassPermissions"` to auto-approve all tool calls, or omit to inherit the parent session's mode.
+
+**`skills`**: Array of skill names pre-loaded into the agent's context. The agent can invoke these without the user explicitly requesting them. Example: `skills: ["lint-fix", "test-runner"]`.
+
+**`mcpServers`**: Object mapping MCP server names to their config. Restricts which MCP servers the agent can access. Omit to inherit all servers from the parent session.
+
+**`memory`**: Loads a named memory profile (a CLAUDE.md variant) into the agent's context. Useful when agents need project-specific instructions that differ from the main session's memory.
+
+**`isolation`**: See [Worktree Isolation](#worktree-isolation) below.
+
+### Worktree Isolation
+
+When `isolation` is set, the agent runs in a temporary git worktree -- a separate checkout of your repository at a different path. The agent's file edits happen on a copy, not your working tree.
+
+**How it works**:
+1. Claude creates a temporary git worktree from your current branch
+2. The agent runs all its work inside that worktree
+3. When the agent finishes, changes are returned as a diff
+4. The main session can review and apply the diff to the real working tree
+
+**When to use isolation**:
+- Parallel agents editing the same files (each gets its own copy)
+- Risky or experimental changes you want to review before applying
+- Agents that run destructive commands (database resets, `rm -rf`, etc.)
+
+**Configuration**:
+```yaml
+---
+name: risky-refactor
+description: Performs large refactors in an isolated worktree
+tools: Read, Write, Edit, Bash, Grep, Glob
+isolation: worktree
+---
+```
+
+Without isolation, parallel agents that touch the same files will overwrite each other. Isolation eliminates this by giving each agent its own checkout.
+
+### Model Override Tradeoffs
+
+Use the `model` field to match cost and capability to the task:
+
+| Model | Use when | Tradeoff |
+| --- | --- | --- |
+| `haiku` | Simple/mechanical tasks: search, grep, test runs, linting | Cheapest, fastest, highest rate limits. Weaker reasoning. |
+| `sonnet` | Balanced tasks: code review, moderate edits, migrations | Good reasoning at moderate cost. Default for most work. |
+| `opus` | Complex reasoning: architecture decisions, tricky refactors | Best reasoning. Slowest, most expensive, lowest rate limits. |
+
+When unset, agents inherit the parent session's model. Override only when the default is a poor fit -- an Explore agent already defaults to Haiku, so overriding it would be wasteful.
+
 ### Example Custom Agents
 
 **Test Runner Agent**:
@@ -258,6 +309,19 @@ and migration patterns. Always:
 3. Check for data loss risks
 ```
 
+## Agents vs Skills
+
+Skills are reusable prompt templates invoked by name (`/skill-name`); agents are autonomous workers for dynamic, multi-step tasks. The distinction matters for deciding how to package reusable work.
+
+| | Skills | Agents |
+| --- | --- | --- |
+| **Invoked by** | Slash command (`/lint-fix`) | Agent tool or auto-delegation |
+| **Runs in** | Main conversation context | Separate context window |
+| **Best for** | Repeatable workflows with a known recipe | One-off complex work requiring exploration |
+| **Context** | Inherits full conversation | Starts fresh (prompt must be self-contained) |
+
+**Rule of thumb**: If you find yourself writing the same agent prompt repeatedly, extract it into a skill. If a skill needs to branch, loop, or explore, make it an agent.
+
 ## When to Use Subagents vs Working Directly
 
 ### Use Subagents When:
@@ -285,6 +349,39 @@ and migration patterns. Always:
 **Don't forget context**: Subagents (except those with current context access) don't know what you've been discussing. Include all necessary context in the prompt.
 
 **Don't parallelize conflicting writes**: Two agents editing the same file will cause problems. Sequence them instead.
+
+## Debugging Failed Agents
+
+When a subagent returns unexpected results or fails silently, use these strategies.
+
+### Common Failure Modes
+
+| Failure | Symptom | Fix |
+| --- | --- | --- |
+| **Timeout** | Agent hits `maxTurns` without finishing | Increase `maxTurns`, break task into smaller pieces, or use a faster model |
+| **Wrong tools** | Agent tries a tool not in its `tools` list | Add the missing tool or use a different agent type |
+| **Context overflow** | Agent loses early instructions on long tasks | Reduce scope per agent; split into phases |
+| **Vague prompt** | Agent does unrelated work | Add file paths, concrete requirements, and success criteria to the prompt |
+
+### Inspecting Agent Output
+
+Resume a finished agent to interrogate its results:
+
+```
+Agent(resume: "agent-id", prompt: "What files did you change and why? List any errors you encountered.")
+```
+
+For background agents, use `TaskOutput` to retrieve the result at any time.
+
+### Recovering from Failure
+
+If an agent made partial progress, resume it with corrective instructions rather than starting over:
+
+```
+Agent(resume: "agent-id", prompt: "The tests in src/auth/ are still failing. Focus only on fixing the JWT validation logic.")
+```
+
+This preserves the agent's prior context and avoids re-doing completed work.
 
 ## Agent Teams
 

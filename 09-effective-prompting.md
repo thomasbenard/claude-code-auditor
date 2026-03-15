@@ -64,6 +64,32 @@ Add it and update the middleware to populate it.
 
 In IDEs, `@` references with line ranges work too: `@src/auth.ts#40-60`
 
+### Include Screenshots and Images
+
+Claude Code can analyze images. Paste screenshots directly, or reference image files by path. This is especially useful for UI bugs, design matching, and visual regressions.
+
+```
+Here's a screenshot of the bug: /tmp/button-overflow.png
+The "Submit" button text is clipped on mobile. Fix the CSS
+in src/components/Button.module.css.
+```
+
+### Share Error Messages Fully
+
+Paste the complete error output and stack trace -- do not paraphrase or truncate it. Include the command or action that triggered it, and state what you expected versus what actually happened.
+
+```
+Running `npm run build` produces this error:
+
+TypeError: Cannot read properties of undefined (reading 'map')
+    at buildRoutes (src/router.ts:44:18)
+    at Object.<anonymous> (src/index.ts:12:1)
+
+Expected: clean build. This started after I added the /products route.
+```
+
+Summarizing errors ("I got a TypeError somewhere in the router") forces Claude to guess at details it could act on immediately.
+
 ## Prompt Patterns
 
 ### The "Like X" Pattern
@@ -156,6 +182,17 @@ Step 5: "Run all tests and fix any issues"
 
 Each step builds on the previous one, and you can course-correct between steps.
 
+### Multi-Turn Strategies
+
+Effective multi-turn conversations follow a pattern: front-load context in the first message, then use follow-ups for refinement.
+
+| Do | Don't |
+|---|---|
+| Put requirements, constraints, and file references in message 1 | Spread context across many small messages |
+| Use "continue" or "now do X" for sequential steps | Repeat instructions Claude already has |
+| Say "good, now also handle the edge case where..." to refine | Re-explain the entire task when adding a detail |
+| Redirect immediately if Claude goes off track | Let Claude finish a wrong approach before correcting |
+
 ### The Review Workflow
 
 Use Claude Code to review changes before committing:
@@ -205,6 +242,23 @@ During long implementation sessions:
 2. **Use subagents for verification**: Delegate test runs to subagents
 3. **Summarize progress**: "Summarize what we've done so far before we continue"
 4. **Start new sessions for new phases**: If context gets too full, start a new session with a clear brief
+
+### When to Start a Fresh Conversation
+
+Start a new conversation when:
+
+- **Context is compressed** -- Claude has compacted multiple times and is losing details
+- **Switching to unrelated work** -- a new task with different files and goals
+- **Claude keeps repeating mistakes** -- a fresh start often fixes loops caused by stale context
+- **After a major milestone** -- commit your work, then start clean for the next phase
+
+When starting fresh, give Claude a brief of the current state rather than replaying the full history:
+
+```
+I just finished adding the products API (already committed).
+Now I need to add filtering and pagination to GET /api/v1/products.
+The endpoint is in src/api/products.ts and the repo is src/repos/products.ts.
+```
 
 ## Common Mistakes to Avoid
 

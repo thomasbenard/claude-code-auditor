@@ -66,6 +66,8 @@ When Claude decides to use an MCP tool, the flow is:
 7. Claude Code passes the result back to Claude
 8. Claude incorporates the result and continues reasoning
 
+If a tool call fails (server error, timeout, invalid input), Claude receives the error response and decides how to proceed -- it may retry with corrected parameters, try an alternative approach, or report the failure. Claude does not retry infinitely; it treats MCP errors the same way it treats built-in tool errors.
+
 This is transparent to you -- MCP tools look and behave like built-in tools from the user's perspective.
 
 ### Transport Types
@@ -79,6 +81,10 @@ MCP servers connect to Claude Code through one of these transport mechanisms:
 | **SSE** (deprecated) | Server-sent events over HTTP | Legacy servers only | Older implementations |
 
 **HTTP** is preferred for remote services -- it supports authentication, is firewall-friendly, and the server runs independently. **Stdio** is best for local tools where the server runs on your machine and needs access to local resources.
+
+### Server Lifecycle
+
+MCP servers persist for the duration of a Claude Code session. A stdio server is spawned when the session starts and remains running, so it can maintain in-memory state (database connections, caches, authentication tokens) across multiple tool calls. When the session ends, the server process is terminated. Starting a new session spawns fresh server instances with no carried-over state. HTTP servers follow the same logical lifecycle from Claude Code's perspective, though the remote process itself may outlive the session.
 
 ## Adding and Managing Servers
 
@@ -282,6 +288,10 @@ Wildcards work at any level:
 
 Evaluation order is the same as for built-in tools: deny rules are checked first, then allow rules.
 
+### Tool Filtering
+
+There is no built-in configuration to hide specific tools from an MCP server before they reach Claude. All tools a server exposes are loaded into context. To limit exposure, use permission deny rules (e.g., `"mcp__server__dangerous_tool"`) to block Claude from calling specific tools, or choose servers that expose fewer tools. Some third-party servers support their own tool-filtering options via command-line flags or environment variables -- check the server's documentation.
+
 ## Elicitation
 
 MCP elicitation allows servers to request structured input from the user mid-task. When a server needs additional information (credentials, configuration choices, confirmation), it sends an elicitation request that Claude Code renders as an interactive dialog -- either form fields or a browser URL for OAuth-style flows.
@@ -393,6 +403,17 @@ Here are commonly used MCP servers and their typical setup:
 **Full-stack with previews**: Combine Puppeteer MCP with a dev server in `launch.json` so Claude can make changes and visually verify them.
 
 **Issue tracking workflow**: Add GitHub MCP so Claude can read issue details, create branches, and open PRs -- all from natural language instructions.
+
+### Finding More Servers
+
+Community MCP servers are cataloged in several places:
+
+- **[modelcontextprotocol.io/servers](https://modelcontextprotocol.io/servers)** -- official directory maintained alongside the spec
+- **[github.com/modelcontextprotocol](https://github.com/modelcontextprotocol)** -- reference server implementations
+- **GitHub search** -- search for `mcp-server` or `modelcontextprotocol` to find community projects
+- **Anthropic docs** -- [docs.anthropic.com](https://docs.anthropic.com) lists verified integrations
+
+Always audit a server's source code and permissions before adding it to your project.
 
 ## Building Your Own MCP Server
 
@@ -613,6 +634,22 @@ For persistent issues, Claude Code's debug mode provides more detail:
 | Server takes long to start | npx downloading package | Pre-cache with manual npx run |
 | Tool returns empty/unexpected data | Wrong env vars or server misconfigured | Verify env vars, test server independently |
 | "Connection refused" for HTTP server | Server is down or URL is wrong | Check URL, verify server is running |
+
+## Security Considerations
+
+MCP servers run with the same OS-level permissions as your shell. A stdio server is a local child process that can read files, access the network, and execute commands -- anything your user account can do. HTTP servers may run on remote infrastructure outside your control.
+
+| Transport | Runs where | Trust implications |
+| --- | --- | --- |
+| **Stdio** | Local process on your machine | Has full access to local files and network |
+| **HTTP** | Remote server | You are sending data to a third-party endpoint |
+
+Mitigations:
+
+- **Audit server code** before adding any community MCP server
+- **Use permission deny rules** to block destructive tools (`mcp__server__delete_*`)
+- **Scope secrets narrowly** -- only pass the environment variables a server actually needs
+- **Prefer project scope** so servers are visible in code review via `.mcp.json`
 
 ## Best Practices
 

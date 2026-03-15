@@ -5,7 +5,91 @@ nav_order: 10
 
 # Chapter 10: Advanced Features
 
-This chapter covers Claude Code's advanced capabilities: hooks for automation, worktrees for isolation, headless mode for CI/CD, IDE integrations, and more. For MCP (Model Context Protocol), see [Chapter 6](06-mcp.md).
+This chapter covers Claude Code's advanced capabilities: custom agents, agent teams, hooks for automation, worktrees for isolation, headless mode for CI/CD, SDK access, IDE integrations, and more. For MCP (Model Context Protocol), see [Chapter 6](06-mcp.md).
+
+## Custom Agents
+
+Custom agents are project-specific or user-specific agent types defined as markdown files with YAML frontmatter. They appear as selectable agent types in the Agent tool alongside built-in types (Explore, Plan, Bash, general-purpose).
+
+### Defining an Agent
+
+Place agent files in `.claude/agents/<name>/agent.md` (project scope) or `~/.claude/agents/<name>/agent.md` (user scope). Each file has YAML frontmatter for configuration and markdown body for the system prompt:
+
+```yaml
+---
+name: code-reviewer
+description: Reviews code changes for quality, security, and best practices
+tools: Read, Grep, Glob
+model: sonnet
+maxTurns: 30
+---
+
+You are a code reviewer. Analyze changes for correctness, security,
+performance, and style. Provide specific, actionable feedback.
+```
+
+### Configuration Fields
+
+| Field | Purpose | Default |
+| --- | --- | --- |
+| `name` | Agent identifier (lowercase, hyphens) | Required |
+| `description` | When to auto-delegate to this agent | Required |
+| `tools` | Allowed tools (comma-separated) | All tools |
+| `disallowedTools` | Explicitly denied tools | None |
+| `model` | Which model to use | Inherited |
+| `maxTurns` | Maximum agentic turns | 50 |
+| `permissionMode` | Permission level | Inherited |
+| `skills` | Pre-loaded skills | None |
+| `mcpServers` | Available MCP servers | None |
+| `background` | Run in background by default | false |
+| `isolation` | Run in isolated worktree | None |
+
+For detailed usage, examples, and best practices, see [Chapter 4: Subagents -- Creating Custom Agents](04-subagents.md#creating-custom-agents).
+
+## Agent Teams
+
+Agent teams let multiple full Claude Code sessions work in parallel on the same codebase, coordinating through a shared task list and direct messaging. Unlike subagents (fire-and-forget workers), teammates are independent sessions that can read/write files, run commands, and message each other autonomously.
+
+### Enabling and Starting a Team
+
+Agent teams are experimental. Enable them in settings or via environment variable:
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
+}
+```
+
+Then describe the team you want in natural language:
+
+```
+Create an agent team to refactor the payment module. Spawn three teammates:
+- One to refactor the Stripe integration
+- One to refactor the PayPal integration
+- One to update all the payment tests
+```
+
+### Key Configuration
+
+| Setting | Purpose |
+| --- | --- |
+| `teammateMode` | Display mode: `in-process` (default), `split-panes` (tmux/iTerm2), or `auto` |
+| `--teammate-mode` | CLI flag equivalent |
+| `Shift+Down` | Cycle through teammates (in-process mode) |
+| `Ctrl+T` | Toggle task list view |
+
+### When to Use Agent Teams vs Subagents
+
+| | Subagents | Agent Teams |
+| --- | --- | --- |
+| **Architecture** | Lightweight child of main context | Full independent session |
+| **Communication** | Reports results to spawner only | Teammates message each other |
+| **Context** | Prompt must be self-contained | Loads CLAUDE.md, MCP, skills |
+| **Best for** | Focused tasks where only the result matters | Complex parallel work needing collaboration |
+
+For full details -- coordination, hooks, display modes, and best practices -- see [Chapter 4: Subagents -- Agent Teams](04-subagents.md#agent-teams).
 
 ## Hooks
 
@@ -484,7 +568,25 @@ Under the hood, scheduled tasks use three tools:
 
 A session can hold up to 50 tasks. Recurring tasks expire after 3 days. Disable scheduling entirely with `CLAUDE_CODE_DISABLE_CRON=1`.
 
-For durable scheduling that survives restarts, use the [Desktop app's scheduled tasks](https://support.claude.com/en/articles/13854387-schedule-recurring-tasks-in-cowork) or GitHub Actions with a `schedule` trigger.
+### Persistent Scheduling
+
+`/loop` and `CronCreate` are session-scoped -- they stop when you exit. For truly persistent recurring tasks, use your OS scheduler or CI/CD system with `claude --print`:
+
+```bash
+# Linux/macOS cron -- run a daily code quality check at 8am
+0 8 * * * cd /path/to/project && claude -p "Run linter and tests, report issues" \
+  --permission-mode bypassPermissions > /tmp/daily-check.log 2>&1
+
+# Windows Task Scheduler (schtasks)
+schtasks /create /tn "DailyCodeCheck" /tr "claude -p \"Run linter and tests\" --permission-mode bypassPermissions" /sc daily /st 08:00
+```
+
+Other options for durable scheduling:
+- **Desktop app**: The [scheduled tasks feature](https://support.claude.com/en/articles/13854387-schedule-recurring-tasks-in-cowork) persists across sessions
+- **GitHub Actions**: Use a `schedule` trigger with `claude -p` in the workflow
+- **CI/CD pipelines**: Any system that can run shell commands on a schedule works with headless mode
+
+See [Headless Mode](#headless-mode) for more on non-interactive usage.
 
 ## MCP (Model Context Protocol)
 
@@ -544,6 +646,24 @@ generate a human-readable changelog grouped by type (features, fixes, etc.)" \
 
 echo "$CHANGELOG" > CHANGELOG.md
 ```
+
+## SDK / Programmatic Access
+
+Beyond the CLI, Claude Code can be controlled programmatically via the `claude-code` npm package. This enables building custom tools, dashboards, and integrations on top of Claude Code's capabilities.
+
+```typescript
+import { claude } from "claude-code";
+
+const result = await claude({
+  prompt: "Find and fix all TypeScript errors in src/",
+  workingDirectory: "/path/to/project",
+  permissionMode: "bypassPermissions",
+});
+
+console.log(result.stdout);
+```
+
+The SDK exposes the same functionality as `claude -p` (see [Headless Mode](#headless-mode)) but as a native JavaScript/TypeScript API -- useful for orchestrating Claude Code from Node.js scripts, custom dev tools, or server-side automation.
 
 ## IDE Integrations
 

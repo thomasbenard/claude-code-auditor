@@ -227,6 +227,29 @@ Skills are loaded from multiple locations with clear precedence:
 
 When skills share the same name, higher-priority locations win. User-level (personal) skills override project-level skills of the same name. Plugin skills use a `plugin-name:skill-name` namespace, so they cannot conflict with other levels. If a skill and a legacy command share the same name, the skill takes precedence.
 
+**Scope precedence edge cases**: If you define a skill named `deploy` in both `~/.claude/skills/deploy/` and `.claude/skills/deploy/`, only the user-level version runs. The project-level version is completely shadowed -- it will not appear in `/skills` output and cannot be invoked. To use both, give them distinct names. Managed (enterprise) skills override everything, including user-level skills. Plugin skills are the exception: their `plugin-name:skill-name` namespace means they never shadow other scopes.
+
+### Migrating Legacy Commands
+
+The `.claude/commands/` directory is the legacy format for custom slash commands. Legacy commands are plain markdown files (no frontmatter, no directory wrapper) that use `$PROMPT` for arguments instead of `$ARGUMENTS`.
+
+To migrate a legacy command to a skill:
+
+1. Create a skill directory: `.claude/skills/<name>/SKILL.md`
+2. Add frontmatter with at least `name` and `description`
+3. Replace `$PROMPT` references with `$ARGUMENTS`
+4. Move any companion files into the skill directory
+
+```
+# Legacy format
+.claude/commands/deploy.md        # Uses $PROMPT
+
+# Skill format
+.claude/skills/deploy/SKILL.md    # Uses $ARGUMENTS, has frontmatter
+```
+
+Legacy commands still work but receive lowest precedence and lack features like auto-invocation, model overrides, and subagent execution.
+
 ### Automatic Discovery in Monorepos
 
 When you work with files in subdirectories, Claude Code automatically discovers skills from nested `.claude/skills/` directories. For example, if you are editing a file in `packages/frontend/`, Claude Code also loads skills from `packages/frontend/.claude/skills/`. This supports monorepo setups where packages define their own skills.
@@ -294,7 +317,7 @@ This keeps verbose output out of the main conversation context.
 
 ## Supporting Files
 
-Skills can reference additional files in their directory:
+Skills can reference additional files in their directory using relative markdown links. Paths resolve relative to the skill directory (the folder containing `SKILL.md`):
 
 ```markdown
 ---
@@ -307,6 +330,12 @@ Create a new API endpoint based on these instructions.
 For the endpoint pattern, follow: [template.md](template.md)
 For examples of existing endpoints, see: [examples.md](examples.md)
 For error handling conventions, see: [reference.md](reference.md)
+```
+
+Claude Code reads linked files on demand (progressive disclosure), so supporting files add no cost until actually referenced during execution. You can also use `${CLAUDE_SKILL_DIR}` in shell preprocessing to build absolute paths when needed:
+
+```markdown
+Load the schema: !`cat ${CLAUDE_SKILL_DIR}/schema.json`
 ```
 
 ## Practical Skill Examples
@@ -383,7 +412,26 @@ Because skills run in the main agent context (not in a subagent), they have acce
 
 This is a key difference from subagents spawned via the Agent tool, where `AskUserQuestion` is **not** available. If your workflow needs to gather user input at runtime, implement it as a skill rather than a custom agent.
 
-For skills that run in a subagent (`context: fork`), `AskUserQuestion` is not available — the skill runs in an isolated context that cannot prompt the user.
+For skills that run in a subagent (`context: fork`), `AskUserQuestion` is not available -- the skill runs in an isolated context that cannot prompt the user.
+
+## Debugging Skills
+
+### Verifying Discovery
+
+Run `/skills` to list all skills Claude Code has loaded. Every registered skill appears with its source scope. If your skill is missing:
+
+| Symptom | Likely cause |
+| --- | --- |
+| Skill not listed at all | Wrong directory structure -- ensure the file is `.claude/skills/<name>/SKILL.md`, not `.claude/skills/SKILL.md` |
+| Skill listed but wrong name | `name` in frontmatter overrides directory name -- check frontmatter |
+| Skill listed but not invocable via `/` | `user-invocable: false` is set in frontmatter |
+| Skill from plugin missing | Plugin may be disabled -- check `/plugins` Installed tab |
+
+### Testing a Skill
+
+1. **Dry run**: Invoke the skill and verify Claude's interpretation before it takes action. Use plan mode (`/plan`) first if the skill has side effects.
+2. **Check preprocessing**: If the skill uses `` !`command` `` syntax, run those commands manually to confirm they produce expected output.
+3. **Inspect argument handling**: Invoke with test arguments and confirm `$ARGUMENTS` expands correctly. Check edge cases like empty arguments or arguments with spaces.
 
 ## Best Practices
 
@@ -401,6 +449,15 @@ For skills that run in a subagent (`context: fork`), `AskUserQuestion` is not av
 
 7. **Keep description accurate**: The description determines when Claude auto-invokes the skill. Be specific about the trigger conditions.
 
+### Skill Performance and Token Efficiency
+
+Skill instructions are injected into the context window, so bloated skills waste tokens and can crowd out useful conversation context. Keep them lean:
+
+- **Avoid reading entire codebases** in skill instructions. Instead, instruct the skill to use Grep-then-Read patterns (search for what's needed, then read only relevant files).
+- **Use supporting files** (`[reference.md](reference.md)`) instead of inlining large reference material. Supporting files load on demand via progressive disclosure.
+- **Use `model: haiku`** for mechanical, low-judgment skills (formatting, simple transforms, boilerplate generation). This is faster and cheaper.
+- **Use `allowed-tools`** to restrict tools to only what the skill needs. Fewer available tools means less overhead per turn.
+
 ## Plugins
 
 Plugins are the distribution mechanism for Claude Code extensions. While skills, agents, hooks, and MCP servers can all exist as standalone configuration in your `.claude/` directory, a plugin packages them together as a versioned, namespaced, distributable unit.
@@ -412,13 +469,13 @@ Plugins are the distribution mechanism for Claude Code extensions. While skills,
 
 A single plugin can bundle any combination of:
 
-- **Skills** — Slash commands and agent skills
-- **Agents** — Custom subagents
-- **Hooks** — Event handlers (PreToolUse, PostToolUse, Stop, etc.)
-- **MCP servers** — External tool connections
-- **LSP servers** — Code intelligence via the Language Server Protocol
-- **Output styles** — Response formatting
-- **Default settings** — Currently only the `agent` key
+- **Skills** -- Slash commands and agent skills
+- **Agents** -- Custom subagents
+- **Hooks** -- Event handlers (PreToolUse, PostToolUse, Stop, etc.)
+- **MCP servers** -- External tool connections
+- **LSP servers** -- Code intelligence via the Language Server Protocol
+- **Output styles** -- Response formatting
+- **Default settings** -- Currently only the `agent` key
 
 Plugins require Claude Code version 1.0.33 or later.
 
@@ -497,7 +554,7 @@ All plugin components are namespaced by the plugin's `name` field to prevent con
 - Agents: `plugin-name:agent-name` (e.g., `plugin-dev:agent-creator`)
 - MCP servers, hooks, and LSP servers integrate seamlessly but are scoped to the plugin
 
-This means multiple plugins can define a skill called `review` without conflicting — each is invoked as `/plugin-a:review` and `/plugin-b:review`.
+This means multiple plugins can define a skill called `review` without conflicting -- each is invoked as `/plugin-a:review` and `/plugin-b:review`.
 
 ### Marketplaces
 
@@ -641,7 +698,7 @@ These are set in managed settings and cannot be overridden by individual users.
 
 ## The Agent Skills Open Standard
 
-Claude Code skills are built on the **Agent Skills** open standard — a portable format for giving agents new capabilities. Anthropic developed the format for Claude Code, then released it as an open standard in December 2025, similar to how it open-sourced the Model Context Protocol (MCP).
+Claude Code skills are built on the **Agent Skills** open standard -- a portable format for giving agents new capabilities. Anthropic developed the format for Claude Code, then released it as an open standard in December 2025, similar to how it open-sourced the Model Context Protocol (MCP).
 
 ### How the Standard Works
 
@@ -687,9 +744,9 @@ Anthropic maintains a [skills directory](https://claude.com/connectors) with par
 
 Example skills and the full specification are available at:
 
-- [agentskills.io](https://agentskills.io) — The open standard specification
-- [github.com/anthropics/skills](https://github.com/anthropics/skills) — Example skills from Anthropic
-- [github.com/agentskills/agentskills](https://github.com/agentskills/agentskills) — The standard's source repository
+- [agentskills.io](https://agentskills.io) -- The open standard specification
+- [github.com/anthropics/skills](https://github.com/anthropics/skills) -- Example skills from Anthropic
+- [github.com/agentskills/agentskills](https://github.com/agentskills/agentskills) -- The standard's source repository
 
 ### Writing Portable Skills
 

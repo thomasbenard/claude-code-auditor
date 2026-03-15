@@ -297,6 +297,26 @@ Key parameters include `prompt`, `subagent_type`, `description`, `model` (overri
 
 This is covered extensively in [Chapter 4: Subagents](04-subagents.md).
 
+### Skill
+
+**Purpose**: Invoke a skill (slash command) within the current conversation.
+
+**Parameters**:
+- `skill` (required): The skill name (e.g., `"commit"`, `"review-pr"`, `"pdf"`)
+- `args` (optional): Arguments to pass to the skill
+
+**Key behaviors**:
+- Only invokes skills listed in `<available-skills>` or system-reminder messages
+- Does NOT handle built-in CLI commands (`/help`, `/clear`, etc.)
+- Skills may be referenced by short name (`"commit"`) or fully qualified name (`"my-mcp:commit"`)
+- Cannot invoke a skill that is already running
+- If a `<command-name>` tag for the skill already exists in the current turn, the skill is already loaded -- follow its instructions directly instead of calling Skill again
+
+**Best practices**:
+- When a user types `/<something>`, check available skills before responding
+- Pass user-provided arguments through `args` exactly as given
+- Do not guess or fabricate skill names -- only use those listed as available
+
 ### EnterPlanMode
 
 **Purpose**: Switch to plan mode for exploring and designing before implementing.
@@ -324,18 +344,38 @@ This is covered extensively in [Chapter 4: Subagents](04-subagents.md).
 
 **Purpose**: Create an isolated git worktree for parallel development.
 
+**Parameters**:
+- `branch` (optional): Branch name for the worktree (auto-generated if omitted)
+- `commit` (optional): Commit or ref to base the worktree on (defaults to HEAD)
+
+**Key behaviors**:
+- Creates a separate working directory with its own checked-out branch
+- Changes in the worktree do not affect the main working directory
+- The worktree shares the same git history and objects as the main repo
+- All subsequent file operations (Read, Edit, Write, Bash) operate within the worktree
+
 **When to use**:
 - Working on features in isolation from the main branch
 - Parallel Claude sessions that shouldn't conflict
 - Experimental changes you might discard
+- Testing a fix without disturbing in-progress work
 
 ### ExitWorktree
 
 **Purpose**: Leave the current worktree and return to the original repository.
 
+**Parameters**:
+- `delete` (optional): Whether to delete the worktree directory on exit
+
+**Key behaviors**:
+- Restores the working directory to the original repository root
+- If `delete` is true, removes the worktree directory (uncommitted changes are lost)
+- If `delete` is false or omitted, the worktree remains on disk for later use
+
 **When to use**:
 - Work in the worktree is complete and changes have been committed
 - Discarding experimental changes and returning to the main branch
+- Switching back to the main repo after a subagent finishes worktree-isolated work
 
 ---
 
@@ -378,37 +418,68 @@ Some tools are "deferred" -- Claude Code knows their names but doesn't load thei
 
 ---
 
+## MCP Tools
+
+MCP (Model Context Protocol) servers can provide additional tools beyond the built-in ones documented in this chapter. These tools appear with an `mcp__<server>__<tool>` naming convention and are loaded on demand via `ToolSearch`. See [Chapter 6: MCP Integrations](06-mcp-integrations.md) for details on configuring MCP servers and working with their tools.
+
+---
+
 ## Tool Chaining Patterns
 
 Common patterns for combining tools effectively:
 
 ### Find-then-Read
 ```
-1. Glob("**/auth*.ts")          → Find relevant files
-2. Read("src/auth/service.ts")  → Read the right one
+1. Glob("**/auth*.ts")          -> Find relevant files
+2. Read("src/auth/service.ts")  -> Read the right one
 ```
 
 ### Search-then-Edit
 ```
-1. Grep("validateToken")        → Find where function is used
-2. Read("src/auth.ts")          → Read the file
-3. Edit("src/auth.ts", ...)     → Make the change
+1. Grep("validateToken")        -> Find where function is used
+2. Read("src/auth.ts")          -> Read the file
+3. Edit("src/auth.ts", ...)     -> Make the change
 ```
 
 ### Edit-then-Verify
 ```
-1. Edit("src/api.ts", ...)      → Make the change
-2. Bash("npm run typecheck")    → Verify types
-3. Bash("npm test")             → Run tests
+1. Edit("src/api.ts", ...)      -> Make the change
+2. Bash("npm run typecheck")    -> Verify types
+3. Bash("npm test")             -> Run tests
 ```
 
 ### Parallel Research
 ```
 # These can all run in parallel:
-1. Grep("UserService")          → Find class usage
-2. Glob("**/user*.test.*")      → Find related tests
-3. Read("src/types/user.ts")    → Read type definitions
+1. Grep("UserService")          -> Find class usage
+2. Glob("**/user*.test.*")      -> Find related tests
+3. Read("src/types/user.ts")    -> Read type definitions
 ```
+
+---
+
+## Tool Error Handling
+
+Common failure modes and how to recover from them:
+
+| Tool | Failure | Cause | Recovery |
+| --- | --- | --- | --- |
+| **Edit** | `old_string` not found | Text doesn't match exactly (whitespace, encoding) | Re-read the file and copy the exact text, including indentation |
+| **Edit** | `old_string` not unique | Multiple occurrences in the file | Add surrounding context lines to make it unique, or use `replace_all` |
+| **Edit** | Not read yet | File hasn't been Read in this conversation | Read the file first, then retry |
+| **Read** | Cannot read directory | Path points to a directory, not a file | Use `ls` via Bash for directories, or Glob to list files |
+| **Read** | PDF too large | PDF exceeds page limit without `pages` parameter | Specify a page range (max 20 pages per request) |
+| **Bash** | Command timed out | Exceeded the 2-minute default timeout | Set a longer `timeout` (up to 600,000ms) or use `run_in_background` |
+| **Bash** | Output truncated | Output exceeded 30,000 characters | Redirect output to a file and Read it, or filter output with pipes |
+| **Write** | Not read yet | Existing file hasn't been Read first | Read the file first, or use Edit for targeted changes |
+| **Glob** | No results | Pattern too restrictive or wrong directory | Broaden the pattern, check the `path`, or try alternative naming conventions |
+| **Grep** | No results | Pattern uses grep syntax instead of ripgrep | Escape literal braces (`\{\}`), check regex syntax against ripgrep docs |
+
+**General principles**:
+- When a tool fails, read the error message carefully -- it usually states the exact cause
+- Prefer retrying with corrected parameters over switching to a Bash workaround
+- For persistent Edit failures, re-read the file to get current contents (the file may have changed)
+- Run independent tool calls in parallel to save time, but chain dependent calls sequentially
 
 ---
 

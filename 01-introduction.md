@@ -60,6 +60,15 @@ Claude Code supports multiple Claude models, each with different tradeoffs:
 
 Switch models during a session with `/model` or `Alt+P`. Subagents can use different models than the main conversation.
 
+## System Requirements
+
+| Requirement | Details |
+| --- | --- |
+| **Node.js** | v18+ (bundled with native installers) |
+| **Git** | Recommended; required for diff-based editing and PR workflows |
+| **OS** | macOS, Linux, Windows (native or WSL) |
+| **Terminal** | Any terminal emulator; 256-color support recommended |
+
 ## Installing Claude Code
 
 ```bash
@@ -77,6 +86,42 @@ winget install Anthropic.ClaudeCode
 ```
 
 Native installations auto-update in the background. Homebrew and WinGet require manual upgrades (`brew upgrade claude-code` / `winget upgrade Anthropic.ClaudeCode`).
+
+### Authentication & First Run
+
+On first launch, `claude` prompts you to authenticate. You can also manage auth explicitly:
+
+```bash
+claude auth login          # interactive login (opens browser)
+claude auth status         # show current account and plan
+claude auth logout         # sign out
+```
+
+| Account type | How to authenticate |
+| --- | --- |
+| **Claude Pro / Team / Enterprise** | Browser-based OAuth via `claude auth login` |
+| **API key** | Set `ANTHROPIC_API_KEY` environment variable |
+| **Amazon Bedrock** | Set `CLAUDE_CODE_USE_BEDROCK=1` + AWS credentials |
+| **Google Vertex AI** | Set `CLAUDE_CODE_USE_VERTEX=1` + GCP credentials |
+
+### Pricing & Usage
+
+Claude Code usage counts against your Claude plan's usage limits (Pro, Team, Enterprise) or consumes API credits if using an API key. There is no separate Claude Code subscription. Check Anthropic's pricing page for current plan limits and API rates.
+
+## Quick Start
+
+```bash
+# 1. Install
+curl -fsSL https://claude.ai/install.sh | bash   # or your preferred method
+
+# 2. Authenticate
+claude auth login
+
+# 3. Start working
+claude "add input validation to src/api/users.ts"
+```
+
+Claude reads the file, proposes edits, and asks for permission to apply them. Accept, iterate, or refine your prompt.
 
 ## Running Claude Code
 
@@ -106,11 +151,6 @@ claude --permission-mode plan
 
 # Start in a worktree
 claude --worktree feature-name
-
-# Authentication management
-claude auth login
-claude auth status
-claude auth logout
 
 # List configured custom agents
 claude agents

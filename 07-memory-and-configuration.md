@@ -42,6 +42,29 @@ CLAUDE.md is the primary way to give Claude Code persistent instructions about y
 
 If both `CLAUDE.md` and `.claude/CLAUDE.md` exist, both are loaded.
 
+### CLAUDE.local.md
+
+`CLAUDE.local.md` is for personal, non-committed overrides. Add it to `.gitignore`. Use it for local paths, personal preferences, or machine-specific instructions that shouldn't be shared with the team:
+
+```markdown
+# My local overrides
+
+- My Postgres runs on port 5433 (not default 5432)
+- Use `~/bin/custom-lint` instead of the project linter
+- I prefer verbose test output
+```
+
+### Conflict Resolution and Precedence
+
+When instructions conflict across files, higher-precedence sources win:
+
+1. **Managed policy** (highest) -- organization-enforced, cannot be overridden
+2. **User** (`~/.claude/CLAUDE.md`) -- personal global preferences
+3. **Project** (`.claude/CLAUDE.md`, then `CLAUDE.md`) -- shared team instructions
+4. **Child directories** (`src/frontend/CLAUDE.md`) -- scoped to subdirectory
+
+Managed policies are set by organization admins and enforced across all team members. Individual developers cannot override them. They are used for security rules, compliance requirements, and organization-wide coding standards.
+
 ### What to Put in CLAUDE.md
 
 A good CLAUDE.md contains stable, high-signal information:
@@ -142,6 +165,35 @@ paths:
 ```
 
 Path-scoped rules are only loaded when Claude is working on files matching the patterns, saving context space.
+
+## .claudeignore
+
+`.claudeignore` works like `.gitignore`. Place it in the project root to tell Claude Code to skip matching files and directories from context. This is useful for large generated files, vendored dependencies, and build artifacts that would waste context space.
+
+Example `.claudeignore`:
+
+```gitignore
+# Dependencies
+node_modules/
+vendor/
+
+# Build output
+dist/
+build/
+*.min.js
+*.min.css
+
+# Large data files
+*.csv
+*.sql
+data/fixtures/
+
+# Generated code
+*.generated.ts
+coverage/
+```
+
+Files matched by `.claudeignore` are excluded from tool use (Read, Glob, Grep results) and are not loaded into context.
 
 ## Auto Memory (MEMORY.md)
 
@@ -326,6 +378,32 @@ Settings have a strict precedence order:
   }
 }
 ```
+
+### Model Selection
+
+The `model` setting controls which Claude model is used by default:
+
+| Model | ID example | Best for |
+| --- | --- | --- |
+| **Opus** | `claude-opus-4-6` | Complex reasoning, large refactors, architecture |
+| **Sonnet** | `claude-sonnet-4-6` | General-purpose development (default) |
+| **Haiku** | `claude-haiku-4-5` | Quick tasks, simple edits, fast iteration |
+
+Set the default model in your settings file:
+
+```json
+{
+  "model": "claude-sonnet-4-6"
+}
+```
+
+To switch models mid-session, use the `/model` slash command or press `Alt+P`. The model change applies only to the current session and does not modify your settings file.
+
+### Hooks
+
+Hooks let you run custom commands automatically at specific points in Claude Code's workflow -- for example, formatting files after every edit or running linters after code changes. Hooks are configured in settings files under the `hooks` key.
+
+For full documentation on hook types, matchers, and examples, see [Chapter 10: Advanced Features](10-advanced-features.md).
 
 ## Permission Modes
 

@@ -27,6 +27,7 @@ The `/init` command creates a starter `CLAUDE.md` file. But for best results, yo
 your-project/
 ├── CLAUDE.md                    # Main project instructions
 ├── CLAUDE.local.md              # Personal overrides (gitignored)
+├── .claudeignore                # Files Claude should never read
 ├── .claude/
 │   ├── settings.json            # Shared project settings
 │   ├── settings.local.json      # Personal settings (gitignored)
@@ -57,6 +58,37 @@ Add these to your `.gitignore`:
 CLAUDE.local.md
 .claude/settings.local.json
 ```
+
+### .claudeignore
+
+Create a `.claudeignore` file in the project root to prevent Claude from reading matching files. It uses the same syntax as `.gitignore`:
+
+```gitignore
+# Build outputs
+dist/
+build/
+out/
+*.min.js
+*.bundle.js
+
+# Large data files
+*.csv
+*.sql
+*.sqlite
+data/
+
+# Vendored dependencies
+vendor/
+node_modules/
+third_party/
+
+# Sensitive files (defense in depth -- also use hooks)
+.env*
+*.pem
+*.key
+```
+
+Files matched by `.claudeignore` are excluded from Claude's file reads and search results. Unlike permission deny rules, Claude won't even attempt to access them.
 
 ## Writing an Effective CLAUDE.md
 
@@ -122,6 +154,10 @@ When compacting conversation, preserve:
 4. **Document structure**: File organization helps Claude navigate
 5. **State prohibitions**: What should Claude never do? Say it explicitly.
 6. **Use imports for details**: `@docs/api-conventions.md` instead of pasting long docs
+
+### Maintaining CLAUDE.md
+
+Review your CLAUDE.md periodically -- sprint retros are a good trigger. Remove instructions for deprecated patterns, trim anything Claude already handles well without prompting, and consolidate duplicates. A bloated CLAUDE.md wastes context tokens every conversation, so treat it like code: refactor and prune regularly.
 
 ## Setting Up Modular Rules
 
@@ -227,6 +263,15 @@ paths:
 
 Individual developers override in `.claude/settings.local.json`.
 
+### Local vs Shared Settings
+
+| File | Scope | Committed? |
+|------|-------|------------|
+| `.claude/settings.json` | Team-wide defaults | Yes |
+| `.claude/settings.local.json` | Personal preferences | No (gitignored) |
+
+Use `settings.local.json` for personal MCP servers, permission overrides, and model preferences. It merges on top of `settings.json`, so team defaults still apply.
+
 ## Setting Up MCP Servers
 
 Add MCP server configuration to `.mcp.json` at the project root so the whole team shares the same integrations. For comprehensive coverage of MCP -- including architecture, transport types, authentication, popular servers, and best practices -- see [Chapter 6: MCP](06-mcp.md).
@@ -285,6 +330,21 @@ Claude can then start servers with `preview_start` and take screenshots to verif
 
 ### Protect Sensitive Files
 
+Layer `.claudeignore` with a hook for defense in depth. First, add sensitive patterns to `.claudeignore` (shown above). Then add a hook to catch any edits that slip through:
+
+Files to protect:
+
+| Pattern | Reason |
+|---------|--------|
+| `.env`, `.env.*` | Environment variables, API keys |
+| `*credentials*` | Cloud provider credentials |
+| `*secret*` | Application secrets |
+| `*.pem`, `*.key` | TLS/SSH private keys |
+| `**/serviceAccount*.json` | GCP service account keys |
+| `*.tfvars` | Terraform variable files with secrets |
+
+Hook configuration:
+
 ```json
 {
   "hooks": {
@@ -301,6 +361,18 @@ Claude can then start servers with `preview_start` and take screenshots to verif
     ]
   }
 }
+```
+
+Example `check-protected-files.sh`:
+
+```bash
+#!/usr/bin/env bash
+FILE=$(echo "$TOOL_INPUT" | jq -r '.file_path // .path // empty')
+PROTECTED='\.(env|pem|key)$|credentials|secret|\.tfvars$|serviceAccount'
+if echo "$FILE" | grep -qiE "$PROTECTED"; then
+  echo "BLOCKED: $FILE matches a protected file pattern" >&2
+  exit 1
+fi
 ```
 
 ## Creating Project Skills
@@ -349,8 +421,9 @@ When adding Claude Code to a team project:
 3. Create `.claude/rules/` for domain-specific instructions
 4. Add `.mcp.json` for shared MCP server configs
 5. Create common skills in `.claude/skills/`
-6. Update `.gitignore` with personal files
-7. Document the setup in your project's README or contributing guide
+6. Add `.claudeignore` with build outputs, data files, and sensitive patterns
+7. Update `.gitignore` with personal files
+8. Document the setup in your project's README or contributing guide
 
 > **Tip**: Run `/audit-claude-setup <path>` to evaluate any project's Claude Code configuration against these best practices.
 

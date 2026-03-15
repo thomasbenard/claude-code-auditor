@@ -141,6 +141,19 @@ GitHub repositories that aggregate skills, agents, plugins, and tools for Claude
 | [awesome-claude-plugins](https://github.com/quemsah/awesome-claude-plugins) | Automated collection of Claude Code plugin adoption metrics |
 | [claude-code-ultimate-guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide) | Beginner-to-power-user guide with production-ready templates and quizzes |
 | [Awesome Claude](https://awesomeclaude.ai) | Visual directory and searchable index of Claude Code resources |
+| [MCP Servers Directory](https://github.com/modelcontextprotocol/servers) | Official directory of MCP servers — browse available integrations for databases, APIs, dev tools, and more |
+
+## Template Repositories
+
+Starter templates and example projects for common Claude Code patterns — skills, custom agents, hooks, and project setups — are available on GitHub. Searching for "claude code template", "claude code skills", or "claude code starter" yields actively maintained repos covering a range of languages and frameworks.
+
+## Comparison Resources
+
+Articles comparing Claude Code with alternatives like Cursor, GitHub Copilot, Windsurf, and Cline are widely available. These comparisons evolve quickly as each tool ships new features, so search for recent posts rather than relying on older articles. Terms like "Claude Code vs Cursor" or "Claude Code vs Copilot" surface current head-to-head comparisons.
+
+## Conference Talks
+
+Anthropic team members and community developers have presented on Claude Code and agentic coding at various conferences and meetups. Search YouTube for "Claude Code talk" or "Claude Code demo" to find recordings covering architecture, workflows, and live coding sessions.
 
 ## Communities
 
