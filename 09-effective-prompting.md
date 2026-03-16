@@ -143,6 +143,36 @@ Only modify src/components/Button.tsx and its test file.
 Don't change any other files or add new dependencies.
 ```
 
+### The "Challenge Me" Pattern
+
+Ask Claude to push back on your approach before implementing it:
+
+```
+I'm thinking of adding a Redis cache in front of every database query.
+Before you implement anything, challenge this idea. What are the
+downsides? What could go wrong? Is there a simpler approach I'm missing?
+```
+
+This is valuable when you want a second opinion, not just execution. Variations include:
+
+```
+# Question assumptions
+I want to rewrite the auth module in Rust for performance.
+What assumptions am I making that might be wrong? What would
+you investigate first before committing to this?
+
+# Propose alternatives
+I'm going to add a message queue between the API and the
+email service. Before we do that, give me two other approaches
+that could solve the same problem with less infrastructure.
+
+# Spot risks
+Here's my plan for the database migration. What could go wrong
+in production that I haven't accounted for?
+```
+
+By default Claude tends toward agreement and execution. This pattern explicitly invites critical thinking before code gets written — catching flawed assumptions when they're cheap to fix.
+
 ## Workflow Patterns
 
 ### The Exploration Workflow
