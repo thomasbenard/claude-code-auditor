@@ -173,6 +173,16 @@ in production that I haven't accounted for?
 
 By default Claude tends toward agreement and execution. This pattern explicitly invites critical thinking before code gets written — catching flawed assumptions when they're cheap to fix.
 
+**Tip:** If you want Claude to *always* push back rather than asking each time, save it as a feedback memory:
+
+```
+Remember: before implementing a significant change, briefly state any
+concerns or alternatives you see — even if I didn't ask. I'd rather
+hear pushback early than discover problems later.
+```
+
+Claude will store this as a [feedback memory](07-memory-and-configuration.md) and apply it in every future conversation — no need to repeat the prompt pattern. Alternatively, add it as a directive in your [global `~/.claude/CLAUDE.md`](07-memory-and-configuration.md) to enforce it across all projects with stronger authority than a memory.
+
 ## Workflow Patterns
 
 ### The Exploration Workflow
