@@ -29,6 +29,7 @@ Structured learning paths for beginners and experienced developers alike.
 | [Claude Code: A Highly Agentic Coding Assistant](https://learn.deeplearning.ai/courses/claude-code-a-highly-agentic-coding-assistant/) | Elie Schoppik / DeepLearning.AI | The definitive short course, built with Anthropic — covers subagents, GitHub workflows, MCP servers, and Figma-to-code |
 | [Claude Code in Action](https://anthropic.skilljar.com/claude-code-in-action) | Anthropic Skilljar | Hands-on training covering architecture, implementation techniques, and advanced integrations |
 | [Claude 101](https://claude101.every.to/) | Every | Beginner-friendly course for getting started with Claude Code |
+| [Claude Code Deep Dive](https://frontendmasters.com/workshops/advanced-claude-code/) | Lydia Hallie / Frontend Masters | Full-day workshop by an Anthropic Claude Code team member — CLAUDE.md, permissions, skills, hooks, subagents, worktrees, and building an MCP server from scratch |
 
 ## YouTube Channels
 
@@ -116,6 +117,18 @@ AI tutorials and interviews for busy people, read by 140K+ subscribers. Includes
 
 - **Link**: [creatoreconomy.so](https://creatoreconomy.so/)
 
+### Harper Reed — "My LLM Codegen Workflow"
+
+Former CTO of Obama's 2012 campaign, now CEO of an AI research firm. Documents a spec-driven TDD workflow: GPT-4o for ideation → reasoning model for specs → Claude Code for implementation. Key insight: "robots love TDD" as the primary counter to hallucination.
+
+- **Link**: [harper.blog](https://harper.blog/2025/05/08/basic-claude-code/)
+
+### Ran Isenberg — "Claude Code Best Practices: Lessons From Real Projects"
+
+AWS Serverless Hero and Principal Cloud Architect at Palo Alto Networks. Grounded in three completed production projects. Counter-narrative to typical AI hype: "your domain expertise is the bottleneck, not the tool." Covers spec-driven development, security gaps AI won't flag, and BMAD integration.
+
+- **Link**: [ranthebuilder.cloud](https://ranthebuilder.cloud/blog/claude-code-best-practices-lessons-from-real-projects/)
+
 ## Podcasts
 
 Long-form interviews with the people who build and use Claude Code.
@@ -142,6 +155,8 @@ GitHub repositories that aggregate skills, agents, plugins, and tools for Claude
 | [claude-code-ultimate-guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide) | Beginner-to-power-user guide with production-ready templates and quizzes |
 | [Awesome Claude](https://awesomeclaude.ai) | Visual directory and searchable index of Claude Code resources |
 | [MCP Servers Directory](https://github.com/modelcontextprotocol/servers) | Official directory of MCP servers — browse available integrations for databases, APIs, dev tools, and more |
+| [claude-context](https://github.com/zilliztech/claude-context) | MCP plugin for semantic code search over large codebases using vector embeddings — ~40% token reduction, supports TypeScript, Python, Java, C++, and more |
+| [vscode-mcp](https://github.com/tjx666/vscode-mcp) | MCP server exposing VS Code's LSP diagnostics in real time — replaces slow `tsc`/`eslint` runs with instant type errors, symbol navigation, and reference finding |
 
 ## Template Repositories
 
