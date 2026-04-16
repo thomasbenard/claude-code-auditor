@@ -16,10 +16,12 @@ Claude Code ships with built-in commands invoked by typing `/` in the prompt:
 | --- | --- |
 | `/clear` | Clear the conversation history and start fresh |
 | `/compact` | Compress conversation to free context space. Accepts optional focus instructions: `/compact focus on the auth refactor` |
-| `/resume` | Open session picker to resume a previous conversation |
+| `/resume` | Open session picker to resume a previous conversation (defaults to current directory; `Ctrl+A` for all) |
 | `/rename <name>` | Rename the current session |
 | `/rewind` | Rewind code and/or conversation to a previous state |
+| `/undo` | Alias for `/rewind` |
 | `/fork [name]` | Create a fork of the current conversation at this point |
+| `/recap` | Show a summary of the current session for context when returning to work |
 
 ### Configuration and Setup
 
@@ -51,6 +53,16 @@ Claude Code ships with built-in commands invoked by typing `/` in the prompt:
 | `/agents` | Create and manage custom subagents |
 | `/hooks` | Configure lifecycle hooks |
 
+### UI and Display
+
+| Command | Purpose |
+| --- | --- |
+| `/tui [fullscreen]` | Switch to flicker-free fullscreen rendering in the same conversation |
+| `/focus` | Toggle focus view (hides transcript, shows only active work) |
+| `/color` | Customize terminal color scheme |
+| `/diff` | Interactive diff viewer for uncommitted changes and per-turn diffs |
+| `/fast [on\|off]` | Toggle fast mode (same model, faster output) |
+
 ### Utilities
 
 | Command | Purpose |
@@ -62,15 +74,15 @@ Claude Code ships with built-in commands invoked by typing `/` in the prompt:
 | `/status` | Show version, account, and model information |
 | `/stats` | View usage statistics |
 | `/copy` | Copy last response to clipboard. Shows a picker when code blocks are present |
-| `/color` | Customize terminal color scheme |
-| `/diff` | Interactive diff viewer for uncommitted changes and per-turn diffs |
-| `/fast [on\|off]` | Toggle fast mode (same model, faster output) |
 | `/review` | *Deprecated.* Install the `code-review` plugin instead: `claude plugin install code-review@claude-code-marketplace` |
 | `/sandbox` | Manage sandbox configuration |
 | `/tasks` | List and manage background tasks |
 | `/voice` | Toggle voice mode (push-to-talk speech input, 20 languages) |
 | `/add-dir <path>` | Add a working directory to the current session |
-| `/vim` | Toggle vim editing mode |
+| `/powerup` | Interactive lessons with animated demos for Claude Code features |
+| `/team-onboarding` | Generate a Claude Code ramp-up guide from your project's usage patterns |
+| `/less-permission-prompts` | Scan transcripts and propose a Bash/MCP tool allowlist for `.claude/settings.json` |
+| `/ultrareview [PR#]` | Deep multi-agent code review. No args = current branch; `<PR#>` = GitHub PR |
 
 ## Bash Mode
 

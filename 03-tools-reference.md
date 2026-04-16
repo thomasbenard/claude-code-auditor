@@ -213,6 +213,15 @@ pattern="import.*from ['\"](react|vue)"  type="ts"  # Framework imports
 - Don't use `sed`/`awk` to edit files (use Edit)
 - Don't use `echo >` to create files (use Write)
 
+### PowerShell (Windows)
+
+**Purpose**: Run PowerShell commands on Windows (opt-in preview).
+
+**Key behaviors**:
+- Available on Windows only; opt in/out with `CLAUDE_CODE_USE_POWERSHELL_TOOL`
+- Use for Windows-native operations that don't work well in Git Bash
+- Same permission model as Bash
+
 ---
 
 ## Web Tools
@@ -276,6 +285,22 @@ pattern="import.*from ['\"](react|vue)"  type="ts"  # Framework imports
 - Use `TaskOutput` to check results from background subagents
 - Don't use for single, trivial tasks
 
+### Monitor
+
+**Purpose**: Stream events from a background process started with `Bash run_in_background`.
+
+**Parameters**:
+- `id` (required): ID of the background process to monitor
+
+**Key behaviors**:
+- Delivers each stdout line as a notification as it arrives
+- Use for long-running scripts (builds, test suites, deployments) instead of polling with `Bash`
+- Completes when the process exits
+
+**Best practices**:
+- Prefer Monitor over `sleep` + repeated Bash calls for process observation
+- Use with `run_in_background` tasks, not foreground commands
+
 ### AskUserQuestion
 
 **Purpose**: Ask the user for clarification, preferences, or decisions.
@@ -293,7 +318,7 @@ pattern="import.*from ['\"](react|vue)"  type="ts"  # Framework imports
 
 **Purpose**: Launch specialized agents for complex, multi-step work. (This tool was previously called "Task" and was renamed to "Agent" in v2.1.63; the old name still works as an alias.)
 
-Key parameters include `prompt`, `subagent_type`, `description`, `model` (override the model per-agent: `sonnet`, `opus`, `haiku`), `run_in_background`, `resume`, and `isolation` (`"worktree"` for isolated git worktree).
+Key parameters include `prompt`, `subagent_type`, `description`, `model` (override the model per-agent: `sonnet`, `opus`, `haiku`), `run_in_background`, and `isolation` (`"worktree"` for isolated git worktree).
 
 This is covered extensively in [Chapter 4: Subagents](04-subagents.md).
 
@@ -342,11 +367,12 @@ This is covered extensively in [Chapter 4: Subagents](04-subagents.md).
 
 ### EnterWorktree
 
-**Purpose**: Create an isolated git worktree for parallel development.
+**Purpose**: Create an isolated git worktree, or switch to an existing one.
 
 **Parameters**:
 - `branch` (optional): Branch name for the worktree (auto-generated if omitted)
 - `commit` (optional): Commit or ref to base the worktree on (defaults to HEAD)
+- `path` (optional): Path to an existing worktree to switch into (skips creation)
 
 **Key behaviors**:
 - Creates a separate working directory with its own checked-out branch

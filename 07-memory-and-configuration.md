@@ -494,7 +494,9 @@ Customize keyboard shortcuts via `~/.claude/keybindings.json`:
 | --- | --- |
 | `Ctrl+C` | Cancel/interrupt current operation |
 | `Ctrl+D` | Exit Claude Code |
-| `Ctrl+L` | Clear screen |
+| `Ctrl+L` | Force full screen redraw |
+| `Ctrl+U` | Clear entire input buffer |
+| `Ctrl+Y` | Restore cleared input buffer |
 | `Ctrl+O` | Toggle verbose output |
 | `Ctrl+R` | Reverse search history |
 | `Ctrl+G` | Open current prompt in text editor |
@@ -517,9 +519,11 @@ Customize keyboard shortcuts via `~/.claude/keybindings.json`:
 | `attribution.pr` | string | Text appended to pull request bodies |
 | `includeGitInstructions` | boolean | Include built-in git commit/PR instructions (default `true`). Set to `false` to remove them |
 | `autoMemoryDirectory` | string | Override the directory where auto memory files are stored |
+| `autoScrollEnabled` | boolean | Auto-scroll in fullscreen TUI mode (default `true`; set to `false` to disable) |
 | `modelOverrides` | object | Map model aliases to custom provider model IDs (e.g., for Bedrock/Vertex) |
 | `language` | string | UI language for Claude Code |
 | `sandbox.enableWeakerNetworkIsolation` | boolean | (macOS) Allow TLS verification for Go programs in sandboxed mode |
+| `sandbox.failIfUnavailable` | boolean | Exit if sandbox cannot be initialized (default `false`) |
 | `cleanupPeriodDays` | number | Delete inactive sessions after N days (default 30) |
 
 ## Claude Code Environment Variables
@@ -537,6 +541,11 @@ In addition to setting environment variables for tools via the `env` key (descri
 | `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` | Disable background task functionality |
 | `CLAUDE_CODE_TMPDIR` | Override the temporary directory used by Claude Code |
 | `CLAUDE_BASH_NO_LOGIN` | Skip login shell initialization for Bash commands |
+| `CLAUDE_CODE_USE_POWERSHELL_TOOL` | (Windows) Opt in/out of the PowerShell tool preview (`1` to enable, `0` to disable) |
+| `CLAUDE_CODE_PERFORCE_MODE` | Add `p4 edit` hints for read-only files in Perforce workflows |
+| `ENABLE_PROMPT_CACHING_1H` | Opt into 1-hour prompt cache TTL (default is 5 minutes) |
+| `FORCE_PROMPT_CACHING_5M` | Force 5-minute prompt cache TTL |
+| `OTEL_LOG_RAW_API_BODIES` | Log full request/response bodies for OpenTelemetry debugging |
 
 Set these in your shell profile, CI environment, or in the `env` key of your settings file.
 

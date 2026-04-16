@@ -92,7 +92,6 @@ The Agent tool takes these key parameters:
 - `description` (required): Short 3-5 word summary
 - `model` (optional): Override the model (sonnet, opus, haiku)
 - `run_in_background` (optional): Run without blocking
-- `resume` (optional): Continue a previous agent by ID
 
 ### Writing Effective Subagent Prompts
 
@@ -128,16 +127,6 @@ The bad prompt fails because the subagent has no idea what you were looking at.
 - Use when you have independent work to do
 - Use for long-running tasks (test suites, builds)
 - Check results later with `TaskOutput`
-
-### Resuming Agents
-
-When a subagent finishes, it returns an `agentId`. You can resume it to continue where it left off:
-
-```
-Agent(resume: "agent-id-here", prompt: "Now also check the middleware folder")
-```
-
-This preserves the agent's entire previous context, so you don't need to repeat the original prompt.
 
 ## Parallelization
 
@@ -365,23 +354,11 @@ When a subagent returns unexpected results or fails silently, use these strategi
 
 ### Inspecting Agent Output
 
-Resume a finished agent to interrogate its results:
-
-```
-Agent(resume: "agent-id", prompt: "What files did you change and why? List any errors you encountered.")
-```
-
 For background agents, use `TaskOutput` to retrieve the result at any time.
 
 ### Recovering from Failure
 
-If an agent made partial progress, resume it with corrective instructions rather than starting over:
-
-```
-Agent(resume: "agent-id", prompt: "The tests in src/auth/ are still failing. Focus only on fixing the JWT validation logic.")
-```
-
-This preserves the agent's prior context and avoids re-doing completed work.
+If an agent made partial progress, spawn a new agent with a more targeted prompt rather than retrying the same one.
 
 ## Agent Teams
 

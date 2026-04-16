@@ -23,8 +23,12 @@ Hooks are automated shell commands that execute at specific lifecycle events. Th
 | `SubagentStart` | Subagent spawns | Agent name | Tracking, logging |
 | `SubagentStop` | Subagent finishes | Agent name | Tracking, logging |
 | `Stop` | Claude finishes responding | (no matcher) | Post-response actions |
+| `StopFailure` | Response ends with an API error | (no matcher) | Alert on unexpected stops, retry logic |
 | `TeammateIdle` | Agent team teammate about to go idle | (no matcher) | Enforce quality gates before teammate stops |
 | `TaskCompleted` | Task being marked completed | (no matcher) | Enforce completion criteria |
+| `TaskCreated` | A new task is created | (no matcher) | Audit, logging |
+| `CwdChanged` | Working directory changes | (no matcher) | Environment setup per directory |
+| `FileChanged` | A file changes on disk (outside Claude) | File path | React to external edits |
 | `Elicitation` | MCP server requests user input | (no matcher) | Intercept or auto-fill MCP elicitation dialogs |
 | `ElicitationResult` | User responds to MCP elicitation | (no matcher) | Log or validate elicitation responses |
 | `PreCompact` | Before context compaction | `manual`, `auto` | Save state before compaction |

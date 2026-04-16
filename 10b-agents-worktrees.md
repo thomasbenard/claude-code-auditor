@@ -42,6 +42,7 @@ performance, and style. Provide specific, actionable feedback.
 | `mcpServers` | Available MCP servers | None |
 | `background` | Run in background by default | false |
 | `isolation` | Run in isolated worktree | None |
+| `initialPrompt` | Opening message auto-sent to the agent on spawn | None |
 
 For detailed usage, examples, and best practices, see [Chapter 4: Subagents -- Creating Custom Agents](04-subagents.md#creating-custom-agents).
 

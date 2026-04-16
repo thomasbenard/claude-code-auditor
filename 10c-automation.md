@@ -90,23 +90,62 @@ A session can hold up to 50 tasks. Recurring tasks expire after 3 days. Disable 
 
 ### Persistent Scheduling
 
-`/loop` and `CronCreate` are session-scoped -- they stop when you exit. For truly persistent recurring tasks, use your OS scheduler or CI/CD system with `claude --print`:
+`/loop` and `CronCreate` are session-scoped -- they stop when you exit. For persistent recurring tasks, there are three options depending on where the work needs to run:
+
+| Option | Runs on | Best for |
+| --- | --- | --- |
+| **Routines** | Anthropic cloud | Tasks that should run even when your machine is off |
+| **Desktop scheduled tasks** | Your local machine | Tasks that need local file access or tools |
+| **GitHub Actions / CI** | CI infrastructure | Pipeline-triggered automation |
+
+See [Headless Mode](#headless-mode) for scripting Claude with `claude -p`.
+
+## Routines
+
+Routines are persistent automation that runs on Anthropic-managed cloud infrastructure -- they keep running when your laptop is closed. A routine packages a prompt, one or more GitHub repositories, and optional MCP connectors, and executes on a trigger.
+
+> **Research preview**: Routines are available on Pro, Max, Team, and Enterprise plans. Behavior and limits may change.
+
+### Trigger Types
+
+| Trigger | When it fires |
+| --- | --- |
+| **Scheduled** | On a recurring cadence: hourly, daily, weekdays, weekly, or custom cron |
+| **API** | On demand via an authenticated HTTP POST to a per-routine endpoint |
+| **GitHub event** | In response to repository events (PR opened/closed, release published, etc.) |
+
+A single routine can combine multiple triggers.
+
+### Creating Routines
 
 ```bash
-# Linux/macOS cron -- run a daily code quality check at 8am
-0 8 * * * cd /path/to/project && claude -p "Run linter and tests, report issues" \
-  --permission-mode bypassPermissions > /tmp/daily-check.log 2>&1
+# From the CLI (scheduled routines only)
+/schedule daily PR review at 9am
 
-# Windows Task Scheduler (schtasks)
-schtasks /create /tn "DailyCodeCheck" /tr "claude -p \"Run linter and tests\" --permission-mode bypassPermissions" /sc daily /st 08:00
+# List, update, or trigger existing routines
+/schedule list
+/schedule run
 ```
 
-Other options for durable scheduling:
-- **Desktop app**: The [scheduled tasks feature](https://support.claude.com/en/articles/13854387-schedule-recurring-tasks-in-cowork) persists across sessions
-- **GitHub Actions**: Use a `schedule` trigger with `claude -p` in the workflow
-- **CI/CD pipelines**: Any system that can run shell commands on a schedule works with headless mode
+From the web: [claude.ai/code/routines](https://claude.ai/code/routines) → **New routine**. From the Desktop app: **New task** → **New remote task**.
 
-See [Headless Mode](#headless-mode) for more on non-interactive usage.
+### How Routines Work
+
+Each run starts a full Claude Code cloud session. The routine clones the selected repositories, runs Claude's prompt against them autonomously (no permission prompts), and can push branches prefixed with `claude/` by default. MCP connectors give routines access to external services like Slack or Linear.
+
+Runs appear in your session list -- you can inspect what Claude did, review diffs, and continue the conversation.
+
+### API Trigger Example
+
+```bash
+curl -X POST https://api.anthropic.com/v1/claude_code/routines/<trigger-id>/fire \
+  -H "Authorization: Bearer <token>" \
+  -H "anthropic-beta: experimental-cc-routine-2026-04-01" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Deploy failed in prod. Stack trace: ..."}'
+```
+
+The `text` field passes run-specific context (alert details, log snippets) to the routine prompt.
 
 ## MCP (Model Context Protocol)
 

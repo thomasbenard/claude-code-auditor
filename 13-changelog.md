@@ -28,6 +28,16 @@ This chapter tracks updates to the guide. Each entry summarizes what changed and
 - **10c-automation.md** (formerly in 10-advanced-features.md): Updated CI/CD install to use native installer
 - **10d-integrations.md** (formerly in 10-advanced-features.md): Added Voice Mode section; added Chrome and Slack integration sections
 
+## 2026-04-16
+
+- **03-tools-reference.md**: Removed deprecated `resume` parameter from Agent tool; added `path` parameter to `EnterWorktree`; added `Monitor` tool (stream background process events) and `PowerShell` tool (Windows opt-in)
+- **04-subagents.md**: Removed `resume` parameter and related examples from Agent tool (removed in v2.1.77)
+- **05a-slash-commands.md**: Removed deprecated `/vim`; added `/undo`, `/recap`, `/tui`, `/focus`, `/powerup`, `/team-onboarding`, `/less-permission-prompts`, `/ultrareview`; added "UI and Display" command group
+- **07-memory-and-configuration.md**: Added `Ctrl+U`/`Ctrl+Y` shortcuts; added `autoScrollEnabled` and `sandbox.failIfUnavailable` settings; added new env vars (`CLAUDE_CODE_USE_POWERSHELL_TOOL`, `CLAUDE_CODE_PERFORCE_MODE`, `ENABLE_PROMPT_CACHING_1H`, `FORCE_PROMPT_CACHING_5M`, `OTEL_LOG_RAW_API_BODIES`)
+- **10a-hooks.md**: Added `StopFailure`, `TaskCreated`, `CwdChanged`, and `FileChanged` hook events
+- **10b-agents-worktrees.md**: Added `initialPrompt` frontmatter field for custom agents
+- **10c-automation.md**: Added Routines section covering cloud-hosted automation with schedule, API, and GitHub event triggers
+
 ---
 
 Back to [Index](index.md)

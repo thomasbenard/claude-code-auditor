@@ -234,7 +234,7 @@ If a hook isn't working:
 Subagents (Task tool) can fail silently or get stuck:
 - **Timeout**: long-running agents may hit context or time limits — break the task into smaller pieces
 - **Wrong results**: the subagent lacks your conversation context — include all necessary details in the prompt
-- **Resuming**: use `resume` to continue a headless session from where it left off, or restart with a more specific prompt
+- **Stuck agent**: restart with a more targeted prompt rather than retrying the same one
 - **Debugging**: check the subagent's output for error messages; it appears in the tool result
 
 ### Common Error Messages
